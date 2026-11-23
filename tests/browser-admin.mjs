@@ -46,6 +46,20 @@ try {
     await page.waitForSelector('.kpis');
     console.log(`OK ${name}: painel abre para o admin master`);
     assert.ok(await page.locator('table tbody tr').count() >= 2);
+    if (name === 'desktop') {
+      await page.fill('#evo-inst', 'instancia-teste'); await page.fill('#evo-key', 'chave-de-teste-123');
+      await page.click('#evo-form button[type=submit]');
+      await page.waitForSelector('#evo-msg:has-text("Conexão salva")');
+      await page.fill('#rec-name', 'Destino Teste'); await page.fill('#rec-num', '12'); await page.click('#rec-form button[type=submit]');
+      await page.waitForSelector('#rec-msg:has-text("inválido")');
+      await page.fill('#rec-num', '+55 (11) 99999-0000'); await page.click('#rec-form button[type=submit]');
+      await page.waitForSelector('td:has-text("5511999990000")');
+      const saved = await (await sql("select instance, api_key, evolution_url from public.alert_settings")).json();
+      assert.equal(saved[0].instance, 'instancia-teste'); assert.equal(saved[0].evolution_url, 'https://evo.n8ndredson.com');
+      page.once('dialog', d => d.accept());
+      await page.click('[data-del]'); await page.waitForSelector('text=Nenhum número cadastrado ainda');
+      console.log('OK desktop: conexão da Evolution salva, número validado, adicionado e removido');
+    }
     await page.locator('tr.click').first().click();
     await page.waitForSelector('#detail h2');
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
@@ -61,5 +75,7 @@ try {
   console.log('Sem erros de console.');
 } finally {
   await browser?.close(); server.close();
+  await sql("delete from public.alert_recipients where name='Destino Teste'");
+  await sql("update public.alert_settings set instance='', api_key='', active=true, notify_use=true where id=true");
   for (const u of [admin, plain]) await adminApi('/auth/v1/admin/users/' + u.id, { method: 'DELETE' });
 }

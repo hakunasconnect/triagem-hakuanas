@@ -39,6 +39,7 @@ export function createAdminClient({ url, anonKey, fetch: f = globalThis.fetch?.b
   return {
     get user() { return session?.user ?? null; },
     get signedIn() { return !!session; },
+    get accessToken() { return session?.access_token ?? null; },
     async signIn(email, password) {
       const { ok, body } = await auth('password', { email, password });
       if (!ok || !body.access_token) throw Error('E-mail ou senha incorretos.');

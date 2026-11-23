@@ -1,6 +1,7 @@
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from './config.js';
 import { createAdminClient } from './api.js';
 import { summarize, formatDuration, usersToCSV } from './metrics.js';
+import { alertsPanel, bindAlerts } from './alerts-panel.js';
 
 const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const $ = s => document.querySelector(s);
@@ -50,12 +51,15 @@ async function start() {
 }
 
 async function load() {
-  const [profiles, sessions, events] = await Promise.all([
+  const [profiles, sessions, events, settings, recipients, alerts] = await Promise.all([
     client.rest('profiles?select=*'),
     client.rest('usage_sessions?select=*&order=started_at.desc&limit=5000'),
     client.rest('usage_events?select=*&order=occurred_at.desc&limit=5000'),
+    client.rest('alert_settings?select=*'),
+    client.rest('alert_recipients?select=*&order=created_at.asc'),
+    client.rest('alerts?select=*&order=created_at.desc&limit=50'),
   ]);
-  data = { profiles, sessions, events, summary: summarize({ profiles, sessions, events, now: new Date() }) };
+  data = { settings: settings?.[0] || {}, recipients: recipients || [], alerts: alerts || [], profiles, sessions, events, summary: summarize({ profiles, sessions, events, now: new Date() }) };
 }
 
 function colorsBar(c) {
@@ -89,7 +93,8 @@ async function dashboard() {
   <section class="card"><h2>Últimos 14 dias</h2>${daysChart(s.byDay)}</section>
   <section class="card"><h2>Resultado das triagens (cores)</h2>${colorsBar(s.colors)}<p class="muted">Contagens anônimas: o painel não guarda nome nem dado de saúde de participantes.</p></section>
   <section class="card"><h2>Usuários</h2><div class="scroll"><table><thead><tr><th>Usuário</th><th class="hide-sm">Papel</th><th>Sessões</th><th>Tempo</th><th>Triagens</th><th>Último uso</th></tr></thead><tbody>${s.users.map(u => `<tr class="click" tabindex="0" data-id="${esc(u.id)}"><td>${esc(u.name || u.email)}<br><span class="muted">${esc(u.email)}</span></td><td class="hide-sm"><span class="pill">${esc(u.role)}</span></td><td>${u.sessions}</td><td>${esc(formatDuration(u.totalMs))}</td><td>${u.triages}</td><td>${esc(fmt(u.lastSeen))}</td></tr>`).join('')}</tbody></table></div><p class="muted">Toque em um usuário para ver como e quando usou.</p></section>
-  <div id="detail">${detail()}</div>`;
+  <div id="detail">${detail()}</div>${alertsPanel(data, { esc, fmt })}`;
+  bindAlerts({ client, app, refresh: dashboard });
   $('#out').onclick = logout; $('#pw').onclick = () => passwordView(false); $('#refresh').onclick = dashboard;
   $('#csv').onclick = () => {
     const blob = new Blob(['﻿' + usersToCSV(s.users)], { type: 'text/csv;charset=utf-8' });
