@@ -1,5 +1,5 @@
 // Lógica do endpoint /api/alert (testável, sem depender da Vercel).
-import { normalizePeople, sendAlerts, sendTexts, normalizeNumber } from './server.js';
+import { normalizePeople, sendAlerts, sendTexts, normalizeNumber, buildSummaryMessages, summaryCounts } from './server.js';
 import { createEvolution } from './evolution.js';
 const clip = (v, n) => String(v ?? '').trim().slice(0, n);
 const out = (status, json) => ({ status, json });
@@ -8,7 +8,7 @@ export async function handleAlert({ method, authorization, body } = {}, { fetch:
   if (method !== 'POST') return out(405, { error: 'Método não permitido.' });
   const token = /^Bearer (.+)$/.exec(authorization || '')?.[1];
   if (!token) return out(401, { error: 'Entre com sua conta.' });
-  if (!body || typeof body !== 'object' || !['risk', 'use', 'test', 'wa-connect', 'wa-status'].includes(body.type)) return out(400, { error: 'Pedido inválido.' });
+  if (!body || typeof body !== 'object' || !['risk', 'use', 'start', 'summary', 'test', 'wa-connect', 'wa-status'].includes(body.type)) return out(400, { error: 'Pedido inválido.' });
   const who = await f(`${supabaseUrl}/auth/v1/user`, { headers: { apikey: anonKey, Authorization: 'Bearer ' + token } }).catch(() => null);
   if (!who?.ok) return out(401, { error: 'Sessão inválida. Entre novamente.' });
   const user = await who.json();
@@ -45,6 +45,31 @@ export async function handleAlert({ method, authorization, body } = {}, { fetch:
       if (profile.role !== 'admin_master') return out(403, { error: 'Somente o admin master.' });
       const deliveries = await sendTexts({ texts: ['✅ Teste de conexão da Triagem Hakunas: se você recebeu esta mensagem, o envio de alertas está funcionando.'], settings, recipients, fetch: f }).catch(e => ({ error: e.message }));
       return out(200, deliveries.error ? { sent: false, error: deliveries.error } : { sent: deliveries.some(d => d.ok), deliveries });
+    }
+    const legend = profile.legend_number || '', eventLabel = clip(body.meta?.event, 200);
+    if (body.type === 'start') {
+      const n = Number.isInteger(body.count) && body.count > 0 ? Math.min(body.count, 100000) : 0;
+      const text = `👤 ${name}${legend ? ' (Legendário nº ' + legend + ')' : ''} iniciou uma triagem${n ? ' de ' + n + ' participante(s)' : ''}${eventLabel ? ' — ' + eventLabel : ''}.`;
+      const deliveries = await sendTexts({ texts: [text], settings, recipients, fetch: f }).catch(e => ({ error: e.message }));
+      return out(200, deliveries.error ? { sent: false, error: deliveries.error } : { sent: deliveries.some(d => d.ok) });
+    }
+    if (body.type === 'summary') {
+      const people = normalizePeople(body.people), counts = summaryCounts(body.counts);
+      let saved = 0;
+      try {
+        await sb('triage_summaries', { method: 'POST', body: JSON.stringify({ triager_id: user.id, event_label: eventLabel, total: counts.total, green: counts.green, yellow: counts.yellow, red: counts.red, black: counts.black }) });
+        if (people.length) {
+          const since = new Date(Date.now() - 24 * 3600000).toISOString();
+          const recent = (await sb(`alerts?select=participant_name,participant_phone,color&created_at=gte.${encodeURIComponent(since)}&limit=2000`)) || [];
+          const k = (n, p, c) => [n, p, c].map(s => String(s).toLowerCase()).join('|');
+          const seen = new Set(recent.map(a => k(a.participant_name, a.participant_phone, a.color)));
+          const fresh = people.filter(p => !seen.has(k(p.name, p.phone, p.color)));
+          if (fresh.length) { await sb('alerts', { method: 'POST', body: JSON.stringify(fresh.map(p => ({ triager_id: user.id, color: p.color, participant_name: p.name, participant_phone: p.phone, participant_email: p.email, reasons: p.reasons }))) }); saved = fresh.length; }
+        }
+      } catch {}
+      const texts = buildSummaryMessages({ counts, people, triager: name, legend, event: eventLabel });
+      const deliveries = await sendTexts({ texts, settings, recipients, fetch: f }).catch(e => ({ error: e.message }));
+      return out(200, deliveries.error ? { saved, sent: false, error: deliveries.error } : { saved, sent: deliveries.some(d => d.ok), deliveries });
     }
     if (body.type === 'use') {
       if (!settings.notify_use || !settings.active) return out(200, { sent: false });
