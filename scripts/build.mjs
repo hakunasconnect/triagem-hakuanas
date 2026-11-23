@@ -1,3 +1,4 @@
+import './build-admin.mjs';
 import './prepare-runtimes.mjs';
 import {build} from 'esbuild';
 import {createCanvas} from '@napi-rs/canvas';
