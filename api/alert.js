@@ -12,7 +12,7 @@ export default async function handler(req, res) {
   if (typeof body === 'string') { try { body = JSON.parse(body); } catch { body = null; } }
   const r = await handleAlert(
     { method: req.method, authorization: req.headers.authorization, body },
-    { fetch, supabaseUrl: SUPABASE_URL, anonKey: SUPABASE_ANON_KEY, serviceKey: process.env.SUPABASE_SERVICE_ROLE_KEY },
+    { fetch, supabaseUrl: SUPABASE_URL, anonKey: SUPABASE_ANON_KEY, serviceKey: process.env.SUPABASE_SERVICE_ROLE_KEY, evolutionKey: process.env.EVOLUTION_API_KEY },
   );
   res.status(r.status).json(r.json);
 }

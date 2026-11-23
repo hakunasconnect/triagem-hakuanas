@@ -26,7 +26,7 @@ try {
   for (const [name, w, h] of [['desktop', 1280, 900], ['mobile', 390, 800]]) {
     const ctx = await browser.newContext({ viewport: { width: w, height: h } }), page = await ctx.newPage();
     page.on('pageerror', e => errors.push(name + ': ' + e.message)); page.on('console', m => m.type() === 'error' && !/status of 400/.test(m.text()) && errors.push(name + ' console: ' + m.text()));
-    await page.goto(url);
+    await page.goto(url); await page.waitForSelector('#f'); await page.waitForTimeout(1500);
     await page.fill('#e', plain.email); await page.fill('#p', plain.password); await page.click('button[type=submit]');
     await page.waitForSelector('text=restrito ao admin master');
     console.log(`OK ${name}: usuário comum é barrado`);
@@ -47,7 +47,7 @@ try {
     console.log(`OK ${name}: painel abre para o admin master`);
     assert.ok(await page.locator('table tbody tr').count() >= 2);
     if (name === 'desktop') {
-      await page.fill('#evo-inst', 'instancia-teste'); await page.fill('#evo-key', 'chave-de-teste-123');
+      assert.ok(await page.locator('#wa-connect').isVisible(), 'botão de conectar o WhatsApp deve aparecer'); await page.click('summary'); await page.fill('#evo-inst', 'instancia-teste'); await page.fill('#evo-key', 'chave-de-teste-123');
       await page.click('#evo-form button[type=submit]');
       await page.waitForSelector('#evo-msg:has-text("Conexão salva")');
       await page.fill('#rec-name', 'Destino Teste'); await page.fill('#rec-num', '12'); await page.click('#rec-form button[type=submit]');

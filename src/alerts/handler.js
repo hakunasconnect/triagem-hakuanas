@@ -1,13 +1,14 @@
 // Lógica do endpoint /api/alert (testável, sem depender da Vercel).
 import { normalizePeople, sendAlerts, sendTexts } from './server.js';
+import { createEvolution } from './evolution.js';
 const clip = (v, n) => String(v ?? '').trim().slice(0, n);
 const out = (status, json) => ({ status, json });
 
-export async function handleAlert({ method, authorization, body } = {}, { fetch: f, supabaseUrl, anonKey, serviceKey }) {
+export async function handleAlert({ method, authorization, body } = {}, { fetch: f, supabaseUrl, anonKey, serviceKey, evolutionKey = '' }) {
   if (method !== 'POST') return out(405, { error: 'Método não permitido.' });
   const token = /^Bearer (.+)$/.exec(authorization || '')?.[1];
   if (!token) return out(401, { error: 'Entre com sua conta.' });
-  if (!body || typeof body !== 'object' || !['risk', 'use', 'test'].includes(body.type)) return out(400, { error: 'Pedido inválido.' });
+  if (!body || typeof body !== 'object' || !['risk', 'use', 'test', 'wa-connect', 'wa-status'].includes(body.type)) return out(400, { error: 'Pedido inválido.' });
   const who = await f(`${supabaseUrl}/auth/v1/user`, { headers: { apikey: anonKey, Authorization: 'Bearer ' + token } }).catch(() => null);
   if (!who?.ok) return out(401, { error: 'Sessão inválida. Entre novamente.' });
   const user = await who.json();
@@ -19,10 +20,26 @@ export async function handleAlert({ method, authorization, body } = {}, { fetch:
   try {
     const profile = (await sb(`profiles?id=eq.${encodeURIComponent(user.id)}&select=full_name,legend_number,role,email`))?.[0];
     if (!profile) return out(403, { error: 'Perfil não encontrado.' });
-    const settings = (await sb('alert_settings?select=*'))?.[0] || {};
+    const stored = (await sb('alert_settings?select=*'))?.[0] || {};
+    const settings = { ...stored, api_key: stored.api_key || evolutionKey || '' };
     const recipients = (await sb('alert_recipients?select=name,whatsapp,active')) || [];
     const name = profile.full_name || profile.email || 'Usuário';
 
+    if (body.type === 'wa-connect' || body.type === 'wa-status') {
+      if (profile.role !== 'admin_master') return out(403, { error: 'Somente o admin master.' });
+      if (!evolutionKey || !stored.evolution_url) return out(200, { state: 'unconfigured', error: 'Falta a chave da Evolution no servidor.' });
+      const evo = createEvolution({ url: stored.evolution_url, key: evolutionKey, fetch: f });
+      const instance = stored.instance || 'triagem-hakunas';
+      try {
+        let state = await evo.state(instance);
+        if (body.type === 'wa-status' || state === 'open') return out(200, { state });
+        let qr;
+        if (state === 'absent') { ({ qr } = await evo.create(instance)); state = 'connecting'; }
+        if (!qr) ({ qr } = await evo.qr(instance));
+        if (stored.instance !== instance) await sb('alert_settings?id=eq.true', { method: 'PATCH', body: JSON.stringify({ instance, updated_at: new Date().toISOString() }) });
+        return out(200, { state, ...(qr ? { qr } : {}) });
+      } catch (e) { return out(200, { state: 'error', error: e.message }); }
+    }
     if (body.type === 'test') {
       if (profile.role !== 'admin_master') return out(403, { error: 'Somente o admin master.' });
       const deliveries = await sendTexts({ texts: ['✅ Teste de conexão da Triagem Hakunas: se você recebeu esta mensagem, o envio de alertas está funcionando.'], settings, recipients, fetch: f }).catch(e => ({ error: e.message }));

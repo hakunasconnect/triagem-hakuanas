@@ -12,12 +12,15 @@ export function alertsPanel({ settings: s = {}, recipients: rs = [], alerts: al 
   const alertRows = al.map(a => `<tr><td>${esc(fmt(a.created_at))}</td><td>${esc(a.participant_name)}</td><td><span class="pill">${a.color === 'black' ? 'Preto' : 'Vermelho'}</span></td><td>${esc((a.reasons || []).join('; '))}</td><td class="hide-sm muted">${esc(a.participant_phone)} ${esc(a.participant_email)}</td><td>${status(a)}</td></tr>`).join('');
   return `<section class="card" id="alerts"><h2>Alertas por WhatsApp (Evolution)</h2>
   <p class="muted">Quando uma triagem sai <strong>vermelha ou preta</strong>, os números abaixo recebem nome, motivos, telefone e e-mail. Só você, como admin, vê estes dados.</p>
+  <div id="wa-box"><p id="wa-status" role="status">Verificando a conexão do WhatsApp…</p><div id="wa-qr"></div><button class="primary" type="button" id="wa-connect">Conectar WhatsApp (gerar QR code)</button></div>
+  <details style="margin-top:14px"><summary>Avançado: informar instância e chave manualmente</summary>
   <form id="evo-form"><label for="evo-url">Endereço da Evolution</label><input id="evo-url" type="url" value="${esc(s.evolution_url || 'https://evo.n8ndredson.com')}" required>
-  <label for="evo-inst">Nome da instância</label><input id="evo-inst" value="${esc(s.instance || '')}" placeholder="como aparece em evo.n8ndredson.com/manager" required>
-  <label for="evo-key">API key da instância</label><input id="evo-key" type="password" autocomplete="off" value="${esc(s.api_key || '')}" required>
+  <label for="evo-inst">Nome da instância</label><input id="evo-inst" value="${esc(s.instance || '')}" placeholder="deixe vazio para criar automaticamente">
+  <label for="evo-key">API key da instância</label><input id="evo-key" type="password" autocomplete="off" value="${esc(s.api_key || '')}" placeholder="deixe vazio para usar a chave do servidor">
   <label><input type="checkbox" id="evo-active" ${s.active !== false ? 'checked' : ''} style="width:auto"> Alertas ativos</label>
   <label><input type="checkbox" id="evo-use" ${s.notify_use !== false ? 'checked' : ''} style="width:auto"> Avisar também a cada novo uso do app</label>
-  <p class="err" id="evo-msg" role="alert"></p><button class="primary" type="submit">Salvar conexão</button> <button type="button" id="evo-test">Enviar mensagem de teste</button></form>
+  <p class="err" id="evo-msg" role="alert"></p><button class="primary" type="submit">Salvar conexão</button> <button type="button" id="evo-test">Enviar mensagem de teste</button></form></details>
+  <p style="margin-top:10px"><button type="button" id="evo-test2">Enviar mensagem de teste</button> <span class="err" id="evo-msg2" role="alert"></span></p>
   <h2 style="margin-top:18px">Quem recebe</h2>
   ${rs.length ? `<div class="scroll"><table><thead><tr><th>Nome</th><th>WhatsApp</th><th>Ativo</th><th></th></tr></thead><tbody>${recipientRows}</tbody></table></div>` : '<p class="muted">Nenhum número cadastrado ainda.</p>'}
   <form id="rec-form" style="margin-top:10px"><label for="rec-name">Nome</label><input id="rec-name" maxlength="100" required>
@@ -36,17 +39,49 @@ export function bindAlerts({ client, app, refresh }) {
       const url = $('#evo-url').value.trim();
       if (!/^https:\/\/[^ ]+$/.test(url)) throw Error('O endereço deve começar com https://');
       await client.rest('alert_settings?id=eq.true', { method: 'PATCH', body: JSON.stringify({ evolution_url: url, instance: $('#evo-inst').value.trim(), api_key: $('#evo-key').value.trim(), active: $('#evo-active').checked, notify_use: $('#evo-use').checked, updated_at: new Date().toISOString() }) });
-      await refresh(); say('evo-msg', 'Conexão salva.', true);
+      await refresh(); const d = app.querySelector('#alerts details'); if (d) d.open = true; say('evo-msg', 'Conexão salva.', true);
     } catch (e) { say('evo-msg', e.message); }
   };
-  $('#evo-test').onclick = async () => {
-    say('evo-msg', 'Enviando teste…');
+  const api = async type => {
+    const r = await fetch('/api/alert', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + client.accessToken }, body: JSON.stringify({ type }) });
+    return r.json();
+  };
+  const runTest = id => async () => {
+    say(id, 'Enviando teste…');
     try {
-      const r = await fetch('/api/alert', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + client.accessToken }, body: JSON.stringify({ type: 'test' }) });
-      const j = await r.json();
-      if (j.sent) say('evo-msg', 'Teste enviado. Confira o WhatsApp dos números ativos.', true);
-      else say('evo-msg', 'Não enviou: ' + (j.error || (j.deliveries || []).map(d => d.error).filter(Boolean).join('; ') || 'sem resposta'));
-    } catch { say('evo-msg', 'Sem conexão com o servidor de alertas.'); }
+      const j = await api('test');
+      if (j.sent) say(id, 'Teste enviado. Confira o WhatsApp dos números ativos.', true);
+      else say(id, 'Não enviou: ' + (j.error || (j.deliveries || []).map(d => d.error).filter(Boolean).join('; ') || 'sem resposta'));
+    } catch { say(id, 'Sem conexão com o servidor de alertas.'); }
+  };
+  $('#evo-test').onclick = runTest('evo-msg'); $('#evo-test2').onclick = runTest('evo-msg2');
+
+  // Conexão do WhatsApp por QR code: a instância é criada sozinha; a pessoa só escaneia.
+  const status = $('#wa-status'), qrBox = $('#wa-qr'), btn = $('#wa-connect');
+  const show = (m, ok = false) => { status.textContent = m; status.style.color = ok ? 'var(--ok)' : ''; };
+  const STATES = { open: ['✅ WhatsApp conectado. Os alertas já podem ser enviados.', true], close: ['WhatsApp ainda não conectado.'], absent: ['WhatsApp ainda não conectado.'], connecting: ['Aguardando a leitura do QR code…'], unconfigured: ['A chave da Evolution ainda não foi configurada no servidor.'] };
+  const paint = j => { const [m, ok] = STATES[j.state] || [j.error || 'Não foi possível verificar a conexão agora.']; show(j.error && !STATES[j.state] ? j.error : m, !!ok); btn.hidden = j.state === 'open'; if (j.state === 'open') qrBox.innerHTML = ''; };
+  let polling = null;
+  const stop = () => { if (polling) { clearInterval(polling); polling = null; } };
+  const drawQr = qr => { qrBox.innerHTML = ''; if (!qr) return; const img = document.createElement('img'); img.src = qr; img.alt = 'QR code para conectar o WhatsApp'; img.width = 260; img.height = 260; img.style.cssText = 'background:#fff;padding:8px;border-radius:8px;display:block;margin:10px 0'; const p = document.createElement('p'); p.className = 'muted'; p.textContent = 'No celular: WhatsApp → Aparelhos conectados → Conectar um aparelho → aponte a câmera para este código.'; qrBox.append(img, p); };
+  api('wa-status').then(paint).catch(() => show('Não foi possível verificar a conexão agora.'));
+  btn.onclick = async () => {
+    stop(); btn.disabled = true; show('Gerando o QR code…');
+    try {
+      const j = await api('wa-connect'); paint(j); drawQr(j.qr);
+      if (j.state === 'open' || j.state === 'unconfigured' || j.state === 'error') return;
+      let ticks = 0;
+      polling = setInterval(async () => {
+        ticks++;
+        if (!status.isConnected || ticks > 60) return stop();
+        try {
+          const s = await api('wa-status');
+          if (s.state === 'open') { stop(); paint(s); await refresh(); return; }
+          if (ticks % 8 === 0) { const n = await api('wa-connect'); if (n.qr) drawQr(n.qr); }
+        } catch {}
+      }, 3000);
+    } catch { show('Sem conexão com o servidor de alertas.'); }
+    finally { btn.disabled = false; }
   };
   $('#rec-form').onsubmit = async ev => {
     ev.preventDefault(); say('rec-msg', '');
