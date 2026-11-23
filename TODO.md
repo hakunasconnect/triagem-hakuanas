@@ -1,5 +1,15 @@
 # Fila — Triagem Hakunas
 
+## Abertos hoje (23/11/2026) — resumo
+
+- [ ] Decidir se a proibição de enviar dados de saúde a nuvem/API continua (define o modo online/IA).
+- [ ] Aval clínico: estado "Excluído/retido", cor para sintomas graves, uso de pressão/pulso/SpO₂, estado "não avaliado".
+- [ ] Conferir `src/criteria.js` contra o manual Hakunas e provar os testes por mutação.
+- [ ] Homologação física: iPhone offline (WebKit falhou em CI), Android/content://, Drive, seletor nativo, impressora.
+- [ ] Decidir nome final e visibilidade de `hakunasconnect/triagem-hakuanas`; republicar o site privado se necessário.
+- Tudo abaixo é **histórico**; itens "pendentes" antigos foram resolvidos nas seções de fechamento.
+
+
 Um item de implementação por execução. Não instalar skills, commitar, enviar, publicar ou fazer upload automaticamente.
 
 ## Item 01 — idade 16–17 isoladamente vermelha

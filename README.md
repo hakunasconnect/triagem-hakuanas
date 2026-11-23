@@ -1,10 +1,13 @@
 # Triagem Hakunas — HTML offline
 
-Versão 1.3.0. Aplicativo local para organizar participantes e apoiar a revisão profissional nas atividades Legendários Hakunas.
+> **Repositório oficial:** https://github.com/hakunasconnect/triagem-hakuanas (migrado de `ebarroso12/hakunatriagem` em 23/11/2026, com branches, tags e Releases). O repositório antigo permanece apenas como cópia histórica.
+
+
+Versão 1.8.3. Aplicativo local para organizar participantes e apoiar a revisão profissional nas atividades Legendários Hakunas.
 
 ## Baixar e usar sem internet
 
-**[Baixar o HTML corrigido](https://github.com/ebarroso12/hakunatriagem/releases/latest/download/Triagem-Hakunas-Corrigida.html)**
+**[Baixar o HTML corrigido](https://github.com/hakunasconnect/triagem-hakuanas/releases/latest/download/Triagem-Hakunas-Corrigida.html)**
 
 Na página, clique em **Baixar HTML completo**. Guarde `Triagem-Hakunas-Offline.html` e abra o arquivo em um navegador atualizado. Em um navegador compatível que execute o arquivo, ele não depende do site, de login, servidor, CDN ou internet para operar. Isso não garante abertura no visualizador de arquivos do iOS ou em content:// do Android. O HTML contém interface, marca, leitores, worker PDF, núcleo WASM e idiomas português/inglês do OCR. Tamanho aproximado: 14 MB.
 
@@ -53,7 +56,7 @@ Impressão/PDF usa o navegador; CSV é resumo legível, neutraliza fórmulas e p
 
 ## Verificação desta entrega
 
-**100 testes aprovados**, build concluído. A entrega desta correção foi solicitada após a manutenção local; veja `docs/STATUS.md`, `TODO.md`, `docs/EVIDENCIAS.md` e `docs/ENTREGA.md`. Incluem regras, exclusões, dados intermediários inválidos, menores, unidades, layout em diversas posições, múltiplas abas/blocos, DOCX/ODT/HTML/XML/JSON, coordenadas PDF, proveniência, ZIP, backup, XSS e CSV.
+**208 testes aprovados** (medido em 23/11/2026, `npm test`), build concluído. Veja `docs/STATUS.md`, `TODO.md`, `docs/EVIDENCIAS.md` e `docs/ENTREGA.md`. Incluem regras, exclusões, dados intermediários inválidos, menores, unidades, layout em diversas posições, múltiplas abas/blocos, DOCX/ODT/HTML/XML/JSON, coordenadas PDF, proveniência, ZIP, backup, XSS e CSV.
 
 O worker OCR incorporado foi executado em contexto JS isolado, com WASM e idiomas embutidos, e reconheceu uma imagem sintética sem acesso à rede. PDF real sintético foi lido pelo motor incluído. O HTML final foi executado em DOM simulado (`file:`), com rede proibida, verificando cadastro, impressão, importação, campos extras e backup.
 

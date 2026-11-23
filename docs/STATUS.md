@@ -1,5 +1,14 @@
 # Estado local — manutenção de 10/11/2026
 
+## Estado atual (23/11/2026)
+
+- Versão 1.8.3; `npm test`: 208/208 aprovados; CI verde no repositório novo.
+- **Origem canônica atual:** `https://github.com/hakunasconnect/triagem-hakuanas` (remota `hakunasconnect`). `ebarroso12/hakunatriagem` ficou como cópia histórica: as URLs de Releases e hashes citados neste arquivo foram verificados lá, e as mesmas 9 Releases foram copiadas ao repositório novo, com nome e tamanho dos arquivos conferidos.
+- O site privado continua na conta antiga (`triagem-hakunas.ebarroso12.chatgpt.site`) e **não** foi migrado.
+- Achados abertos da auditoria de 23/11/2026 (fichas sintéticas): exclusões não alteram a cor (Verde); sintomas graves sem cor; pressão/pulso/SpO₂ não entram no cálculo; Verde é o padrão sem dado. Dependem de aval clínico e não foram alterados.
+- Os registros abaixo são **históricos**; onde dizem "pendente", conferir o fim do arquivo e o `TODO.md`.
+
+
 ## Escopo desta execução
 
 Aplicar as salvaguardas fornecidas como instruções locais e corrigir somente a cor operacional para idades de 16–17 anos. Nenhuma skill foi instalada. Git Guardrails, Planning With Files, Webapp Testing, Trail of Bits Security e Document Skills não foram encontrados com esses nomes no catálogo consultado; não foram carregados. Não foi verificada a classificação editorial do PDF, que não veio anexado a esta mensagem.
