@@ -17,7 +17,7 @@ export function sanitizeMeta(m) {
   return out;
 }
 
-export function createTelemetry({ url, anonKey, fetch: f = globalThis.fetch?.bind(globalThis), appVersion = '' } = {}) {
+export function createTelemetry({ url, anonKey, fetch: f = globalThis.fetch?.bind(globalThis), appVersion = '', alertUrl = 'https://triagemhakunas.vercel.app/api/alert' } = {}) {
   let session = null, sessionId = null, queue = [], flushing = false, timer = null;
   const head = () => ({ apikey: anonKey, Authorization: 'Bearer ' + session.access_token, 'Content-Type': 'application/json', Prefer: 'return=representation' });
   const rest = (path, init = {}) => f(url + '/rest/v1/' + path, { ...init, headers: head() });
@@ -46,6 +46,13 @@ export function createTelemetry({ url, anonKey, fetch: f = globalThis.fetch?.bin
       if (!api.active || flushing || !queue.length) return;
       flushing = true; const batch = queue.slice();
       try { const r = await rest('usage_events', { method: 'POST', body: JSON.stringify(batch) }); if (r.ok) queue = queue.slice(batch.length); } catch {} finally { flushing = false; }
+    },
+    async alert(type, payload = {}) {
+      if (!session) return null;
+      try {
+        const r = await f(alertUrl, { method: 'POST', headers: { Authorization: 'Bearer ' + session.access_token, 'Content-Type': 'application/json' }, body: JSON.stringify({ type, ...payload }) });
+        return await r.json();
+      } catch { return { error: 'Sem conexão com o servidor de alertas.' }; }
     },
     async heartbeat() { if (!api.active) return; try { await rest('usage_sessions?id=eq.' + sessionId, { method: 'PATCH', body: JSON.stringify({ last_seen_at: new Date().toISOString() }) }); } catch {} await api.flush(); },
     async end() {

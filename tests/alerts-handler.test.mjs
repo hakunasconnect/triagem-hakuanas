@@ -1,0 +1,27 @@
+import{test}from'node:test';import assert from'node:assert/strict';
+import{handleAlert}from'../src/alerts/handler.js';
+const J=(status,body)=>({ok:status<400,status,json:async()=>body,text:async()=>JSON.stringify(body)});
+const world=(o={})=>{const db={settings:{id:true,evolution_url:'https://evo.exemplo.com',instance:'triagem',api_key:'CHAVE',notify_use:true,active:true,...(o.settings||{})},recipients:o.recipients||[{name:'Dr. Edson',whatsapp:'5511999990000',active:true}],alerts:o.alerts||[],inserted:[],patched:[],sent:[]};
+ const profile={'u-admin':{id:'u-admin',full_name:'Dr. Edson',legend_number:'203460',role:'admin_master',email:'e@x.co'},'u-tri':{id:'u-tri',full_name:'Triador',legend_number:'111',role:'triador',email:'t@x.co'}};
+ const fetch=async(u,i={})=>{const url=String(u);
+  if(url.includes('/auth/v1/user')){const t=i.headers.Authorization.replace('Bearer ','');return profile[t]?J(200,{id:t}):J(401,{});}
+  if(url.includes('/message/sendText/')){db.sent.push({url,headers:i.headers,body:JSON.parse(i.body)});return o.evoFail?J(500,{}):J(201,{});}
+  if(url.includes('/rest/v1/profiles'))return J(200,[profile[/eq\.([^&]+)/.exec(url)[1]]]);
+  if(url.includes('/rest/v1/alert_settings'))return J(200,[db.settings]);
+  if(url.includes('/rest/v1/alert_recipients'))return J(200,db.recipients);
+  if(url.includes('/rest/v1/alerts')&&(i.method||'GET')==='GET')return J(200,db.alerts);
+  if(url.includes('/rest/v1/alerts')&&i.method==='POST'){const rows=JSON.parse(i.body).map((r,n)=>({...r,id:db.inserted.length+n+1}));db.inserted.push(...rows);return J(201,rows);}
+  if(url.includes('/rest/v1/alerts')&&i.method==='PATCH'){db.patched.push(JSON.parse(i.body));return J(200,[]);}
+  throw new Error('rota inesperada '+url);};
+ return{db,deps:{fetch,supabaseUrl:'https://x.supabase.co',anonKey:'ANON',serviceKey:'SERVICE'}};};
+const risk=[{name:'Ana',phone:'11 9',email:'a@x.com',color:'red',reasons:['Hipertensão']},{name:'Bia',color:'green',reasons:[]}];
+const req=(over={})=>({method:'POST',authorization:'Bearer u-tri',body:{type:'risk',people:risk,meta:{event:'TOP 1'}},...over});
+
+test('Sem login ou com token inválido, nada acontece',async()=>{const w=world();assert.equal((await handleAlert(req({authorization:''}),w.deps)).status,401);assert.equal((await handleAlert(req({authorization:'Bearer falso'}),w.deps)).status,401);assert.equal(w.db.sent.length,0);assert.equal(w.db.inserted.length,0);});
+test('Só aceita POST e tipos conhecidos',async()=>{const w=world();assert.equal((await handleAlert(req({method:'GET'}),w.deps)).status,405);assert.equal((await handleAlert(req({body:{type:'apagar'}}),w.deps)).status,400);assert.equal((await handleAlert(req({body:null}),w.deps)).status,400);});
+test('Risco: grava só vermelho/preto no banco e envia pela Evolution com a chave só no cabeçalho',async()=>{const w=world();const r=await handleAlert(req(),w.deps);assert.equal(r.status,200);assert.equal(r.json.saved,1);assert.equal(r.json.sent,true);assert.equal(w.db.inserted.length,1);assert.equal(w.db.inserted[0].participant_name,'Ana');assert.equal(w.db.inserted[0].triager_id,'u-tri');assert.equal(w.db.sent.length,1);assert.equal(w.db.sent[0].headers.apikey,'CHAVE');assert.ok(!JSON.stringify(w.db.sent[0].body).includes('CHAVE'));assert.match(w.db.sent[0].body.text,/Ana/);assert.match(w.db.sent[0].body.text,/Triador/);assert.ok(!JSON.stringify(r.json).includes('CHAVE'));assert.equal(w.db.patched.length,1);});
+test('Não reenvia a mesma pessoa e cor nas últimas 24 horas',async()=>{const w=world({alerts:[{participant_name:'Ana',participant_phone:'11 9',color:'red'}]});const r=await handleAlert(req(),w.deps);assert.equal(r.json.saved,0);assert.equal(r.json.skipped,1);assert.equal(w.db.sent.length,0);});
+test('Sem configuração, grava o alerta mesmo assim e explica por que não enviou',async()=>{const w=world({settings:{api_key:''}});const r=await handleAlert(req(),w.deps);assert.equal(r.status,200);assert.equal(r.json.saved,1);assert.equal(r.json.sent,false);assert.match(r.json.error,/configura/i);assert.equal(w.db.sent.length,0);});
+test('Falha da Evolution fica registrada e não derruba a resposta',async()=>{const w=world({evoFail:true});const r=await handleAlert(req(),w.deps);assert.equal(r.status,200);assert.equal(r.json.sent,false);assert.equal(r.json.deliveries[0].ok,false);assert.equal(w.db.inserted.length,1);});
+test('Aviso de uso respeita a opção e identifica quem entrou',async()=>{const w=world();const r=await handleAlert(req({body:{type:'use'}}),w.deps);assert.equal(r.json.sent,true);assert.match(w.db.sent[0].body.text,/Triador/);assert.match(w.db.sent[0].body.text,/111/);const off=world({settings:{notify_use:false}});const r2=await handleAlert(req({body:{type:'use'}}),off.deps);assert.equal(r2.json.sent,false);assert.equal(off.db.sent.length,0);});
+test('Teste de conexão é só do admin master',async()=>{const w=world();assert.equal((await handleAlert(req({body:{type:'test'}}),w.deps)).status,403);assert.equal(w.db.sent.length,0);const r=await handleAlert(req({authorization:'Bearer u-admin',body:{type:'test'}}),w.deps);assert.equal(r.status,200);assert.equal(r.json.sent,true);assert.match(w.db.sent[0].body.text,/teste/i);});

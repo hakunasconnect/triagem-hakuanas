@@ -19,8 +19,9 @@ let browser; const errors = [];
 try {
   browser = await chromium.launch({ executablePath: process.env.CHROME_PATH });
   const page = await (await browser.newContext({ viewport: { width: 1280, height: 900 } })).newPage();
-  page.on('pageerror', e => errors.push(e.message));
-  await page.goto(`http://127.0.0.1:${server.address().port}/`);
+  page.on('pageerror', e => errors.push(e.message)); page.on('console', m => /Content Security Policy|Refused to/i.test(m.text()) && errors.push('CSP: ' + m.text()));
+  await page.goto(process.env.APP_URL || `http://127.0.0.1:${server.address().port}/`);
+  await page.waitForSelector('[data-tab=settings]'); await page.waitForTimeout(3000);
   await page.click('[data-tab=settings]');
   await page.waitForSelector('#account-form');
   await page.fill('#account-form [name=email]', email); await page.fill('#account-form [name=password]', password);
