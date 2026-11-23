@@ -12,8 +12,11 @@ export function alertsPanel({ settings: s = {}, recipients: rs = [], alerts: al 
   const alertRows = al.map(a => `<tr><td>${esc(fmt(a.created_at))}</td><td>${esc(a.participant_name)}</td><td><span class="pill">${a.color === 'black' ? 'Preto' : 'Vermelho'}</span></td><td>${esc((a.reasons || []).join('; '))}</td><td class="hide-sm muted">${esc(a.participant_phone)} ${esc(a.participant_email)}</td><td>${status(a)}</td></tr>`).join('');
   return `<section class="card" id="alerts"><h2>Alertas por WhatsApp (Evolution)</h2>
   <p class="muted">Quando uma triagem sai <strong>vermelha ou preta</strong>, os números abaixo recebem nome, motivos, telefone e e-mail. Só você, como admin, vê estes dados.</p>
-  <div id="wa-box"><p id="wa-status" role="status">Verificando a conexão do WhatsApp…</p><div id="wa-qr"></div><button class="primary" type="button" id="wa-connect">Conectar WhatsApp (gerar QR code)</button></div>
-  <details style="margin-top:14px"><summary>Avançado: informar instância e chave manualmente</summary>
+  <div id="wa-box"><p id="wa-status" role="status">Verificando a conexão do WhatsApp…</p><div id="wa-qr"></div><button class="primary" type="button" id="wa-connect">Conectar WhatsApp (gerar QR code)</button>
+  <details style="margin-top:10px"><summary>Não consegue escanear? Conectar com código no celular</summary>
+  <label for="wa-number">Número do WhatsApp que será conectado (DDI + DDD + número)</label><input id="wa-number" inputmode="numeric" placeholder="5511999990000">
+  <p style="margin:8px 0"><button type="button" id="wa-pair">Gerar código de pareamento</button></p><div id="wa-code" class="muted" role="status"></div></details></div>
+  <details id="evo-adv" style="margin-top:14px"><summary>Avançado: informar instância e chave manualmente</summary>
   <form id="evo-form"><label for="evo-url">Endereço da Evolution</label><input id="evo-url" type="url" value="${esc(s.evolution_url || 'https://evo.n8ndredson.com')}" required>
   <label for="evo-inst">Nome da instância</label><input id="evo-inst" value="${esc(s.instance || '')}" placeholder="deixe vazio para criar automaticamente">
   <label for="evo-key">API key da instância</label><input id="evo-key" type="password" autocomplete="off" value="${esc(s.api_key || '')}" placeholder="deixe vazio para usar a chave do servidor">
@@ -39,11 +42,11 @@ export function bindAlerts({ client, app, refresh }) {
       const url = $('#evo-url').value.trim();
       if (!/^https:\/\/[^ ]+$/.test(url)) throw Error('O endereço deve começar com https://');
       await client.rest('alert_settings?id=eq.true', { method: 'PATCH', body: JSON.stringify({ evolution_url: url, instance: $('#evo-inst').value.trim(), api_key: $('#evo-key').value.trim(), active: $('#evo-active').checked, notify_use: $('#evo-use').checked, updated_at: new Date().toISOString() }) });
-      await refresh(); const d = app.querySelector('#alerts details'); if (d) d.open = true; say('evo-msg', 'Conexão salva.', true);
+      await refresh(); const d = app.querySelector('#evo-adv'); if (d) d.open = true; say('evo-msg', 'Conexão salva.', true);
     } catch (e) { say('evo-msg', e.message); }
   };
-  const api = async type => {
-    const r = await fetch('/api/alert', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + client.accessToken }, body: JSON.stringify({ type }) });
+  const api = async (type, extra = {}) => {
+    const r = await fetch('/api/alert', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + client.accessToken }, body: JSON.stringify({ type, ...extra }) });
     return r.json();
   };
   const runTest = id => async () => {
@@ -65,23 +68,38 @@ export function bindAlerts({ client, app, refresh }) {
   const stop = () => { if (polling) { clearInterval(polling); polling = null; } };
   const drawQr = qr => { qrBox.innerHTML = ''; if (!qr) return; const img = document.createElement('img'); img.src = qr; img.alt = 'QR code para conectar o WhatsApp'; img.width = 260; img.height = 260; img.style.cssText = 'background:#fff;padding:8px;border-radius:8px;display:block;margin:10px 0'; const p = document.createElement('p'); p.className = 'muted'; p.textContent = 'No celular: WhatsApp → Aparelhos conectados → Conectar um aparelho → aponte a câmera para este código.'; qrBox.append(img, p); };
   api('wa-status').then(paint).catch(() => show('Não foi possível verificar a conexão agora.'));
+  // O QR do WhatsApp vence em ~20 s: a tela confere a conexão a cada 3 s e troca o QR a cada 12 s.
+  const watch = (renewQr, onExpire) => {
+    let ticks = 0;
+    polling = setInterval(async () => {
+      ticks++;
+      if (!status.isConnected) return stop();
+      if (ticks > 100) { stop(); show('Tempo esgotado. Clique de novo para gerar um novo código.'); onExpire?.(); return; }
+      try {
+        const s = await api('wa-status');
+        if (s.state === 'open') { stop(); paint(s); await refresh(); return; }
+        if (renewQr && ticks % 4 === 0) { const n = await api('wa-connect'); if (n.qr) drawQr(n.qr); }
+      } catch {}
+    }, 3000);
+  };
   btn.onclick = async () => {
-    stop(); btn.disabled = true; show('Gerando o QR code…');
+    stop(); btn.disabled = true; show('Gerando o QR code…'); $('#wa-code').textContent = '';
     try {
       const j = await api('wa-connect'); paint(j); drawQr(j.qr);
       if (j.state === 'open' || j.state === 'unconfigured' || j.state === 'error') return;
-      let ticks = 0;
-      polling = setInterval(async () => {
-        ticks++;
-        if (!status.isConnected || ticks > 60) return stop();
-        try {
-          const s = await api('wa-status');
-          if (s.state === 'open') { stop(); paint(s); await refresh(); return; }
-          if (ticks % 8 === 0) { const n = await api('wa-connect'); if (n.qr) drawQr(n.qr); }
-        } catch {}
-      }, 3000);
+      watch(true);
     } catch { show('Sem conexão com o servidor de alertas.'); }
     finally { btn.disabled = false; }
+  };
+  $('#wa-pair').onclick = async () => {
+    stop(); const number = normalizeNumber($('#wa-number').value), out = $('#wa-code');
+    if (!number) { out.textContent = 'Digite o número com DDI + DDD (por exemplo 5511999990000).'; return; }
+    out.textContent = 'Gerando o código…'; qrBox.innerHTML = '';
+    try {
+      const j = await api('wa-connect', { number }); paint(j);
+      if (j.pairingCode) { out.textContent = ''; const code = document.createElement('strong'); code.style.cssText = 'font-size:1.6rem;letter-spacing:.15em;display:block;margin:8px 0'; code.textContent = j.pairingCode; out.append('No celular: WhatsApp → Aparelhos conectados → Conectar um aparelho → Conectar com número de telefone. Digite este código:', code); watch(false); }
+      else out.textContent = j.state === 'open' ? 'Já está conectado.' : (j.error || 'A Evolution não devolveu o código. Use o QR code.');
+    } catch { out.textContent = 'Sem conexão com o servidor de alertas.'; }
   };
   $('#rec-form').onsubmit = async ev => {
     ev.preventDefault(); say('rec-msg', '');

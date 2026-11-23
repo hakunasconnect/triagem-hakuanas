@@ -7,6 +7,10 @@ export function safeQr(v) {
   return /^data:image\/png;base64,[A-Za-z0-9+/]+={0,2}$/.test(s) && s.length < 400000 ? s : undefined;
 }
 
+export function safeCode(v) {
+  return typeof v === 'string' && /^[A-Za-z0-9-]{6,12}$/.test(v) ? v : undefined;
+}
+
 export function createEvolution({ url, key, fetch: f = globalThis.fetch }) {
   const base = String(url || '').replace(/\/+$/, '');
   const req = async (path, init = {}) => {
@@ -26,10 +30,10 @@ export function createEvolution({ url, key, fetch: f = globalThis.fetch }) {
       if (!r.ok) throw Error('Não foi possível criar a instância (' + r.status + ').');
       return { qr: safeQr(r.json?.qrcode?.base64 || r.json?.base64) };
     },
-    async qr(name) {
-      const r = await req('/instance/connect/' + enc(name));
+    async qr(name, number = '') {
+      const r = await req('/instance/connect/' + enc(name) + (/^\d{10,15}$/.test(number) ? '?number=' + number : ''));
       if (!r.ok) throw Error('Não foi possível gerar o QR code (' + r.status + ').');
-      return { qr: safeQr(r.json?.base64 || r.json?.qrcode?.base64) };
+      return { qr: safeQr(r.json?.base64 || r.json?.qrcode?.base64), pairingCode: safeCode(r.json?.pairingCode) };
     },
   };
 }

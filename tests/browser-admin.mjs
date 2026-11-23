@@ -17,6 +17,8 @@ const mk = async (role, mustChange) => {
   return { id: u.id, email, password };
 };
 const html = await readFile('dist/admin.html');
+const savedSettings = (await (await sql('select evolution_url, instance, api_key, active, notify_use from public.alert_settings')).json())[0];
+const q = v => String(v ?? '').replace(/'/g, "''");
 const server = http.createServer((q, r) => { r.setHeader('content-type', 'text/html; charset=utf-8'); r.end(html); }).listen(0);
 const url = `http://127.0.0.1:${server.address().port}/`;
 const admin = await mk('admin_master', true), plain = await mk('triador', false);
@@ -47,7 +49,7 @@ try {
     console.log(`OK ${name}: painel abre para o admin master`);
     assert.ok(await page.locator('table tbody tr').count() >= 2);
     if (name === 'desktop') {
-      assert.ok(await page.locator('#wa-connect').isVisible(), 'botão de conectar o WhatsApp deve aparecer'); await page.click('summary'); await page.fill('#evo-inst', 'instancia-teste'); await page.fill('#evo-key', 'chave-de-teste-123');
+      assert.ok(await page.locator('#wa-connect').isVisible(), 'botão de conectar o WhatsApp deve aparecer'); await page.click('summary:has-text("Avançado")'); await page.fill('#evo-inst', 'instancia-teste'); await page.fill('#evo-key', 'chave-de-teste-123');
       await page.click('#evo-form button[type=submit]');
       await page.waitForSelector('#evo-msg:has-text("Conexão salva")');
       await page.fill('#rec-name', 'Destino Teste'); await page.fill('#rec-num', '12'); await page.click('#rec-form button[type=submit]');
@@ -57,7 +59,7 @@ try {
       const saved = await (await sql("select instance, api_key, evolution_url from public.alert_settings")).json();
       assert.equal(saved[0].instance, 'instancia-teste'); assert.equal(saved[0].evolution_url, 'https://evo.n8ndredson.com');
       page.once('dialog', d => d.accept());
-      await page.click('[data-del]'); await page.waitForSelector('text=Nenhum número cadastrado ainda');
+      await page.click('tr:has-text("Destino Teste") [data-del]'); await page.waitForSelector('tr:has-text("Destino Teste")', { state: 'detached' });
       console.log('OK desktop: conexão da Evolution salva, número validado, adicionado e removido');
     }
     await page.locator('tr.click').first().click();
@@ -76,6 +78,6 @@ try {
 } finally {
   await browser?.close(); server.close();
   await sql("delete from public.alert_recipients where name='Destino Teste'");
-  await sql("update public.alert_settings set instance='', api_key='', active=true, notify_use=true where id=true");
+  if (savedSettings) await sql("update public.alert_settings set evolution_url='" + q(savedSettings.evolution_url) + "', instance='" + q(savedSettings.instance) + "', api_key='" + q(savedSettings.api_key) + "', active=" + !!savedSettings.active + ", notify_use=" + !!savedSettings.notify_use + " where id=true");
   for (const u of [admin, plain]) await adminApi('/auth/v1/admin/users/' + u.id, { method: 'DELETE' });
 }

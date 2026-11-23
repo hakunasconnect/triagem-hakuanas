@@ -1,5 +1,5 @@
 // Lógica do endpoint /api/alert (testável, sem depender da Vercel).
-import { normalizePeople, sendAlerts, sendTexts } from './server.js';
+import { normalizePeople, sendAlerts, sendTexts, normalizeNumber } from './server.js';
 import { createEvolution } from './evolution.js';
 const clip = (v, n) => String(v ?? '').trim().slice(0, n);
 const out = (status, json) => ({ status, json });
@@ -33,11 +33,12 @@ export async function handleAlert({ method, authorization, body } = {}, { fetch:
       try {
         let state = await evo.state(instance);
         if (body.type === 'wa-status' || state === 'open') return out(200, { state });
-        let qr;
+        const number = normalizeNumber(body.number);
+        let qr, pairingCode;
         if (state === 'absent') { ({ qr } = await evo.create(instance)); state = 'connecting'; }
-        if (!qr) ({ qr } = await evo.qr(instance));
+        if (!qr || number) ({ qr: qr = qr, pairingCode } = await evo.qr(instance, number));
         if (stored.instance !== instance) await sb('alert_settings?id=eq.true', { method: 'PATCH', body: JSON.stringify({ instance, updated_at: new Date().toISOString() }) });
-        return out(200, { state, ...(qr ? { qr } : {}) });
+        return out(200, { state, ...(qr ? { qr } : {}), ...(number && pairingCode ? { pairingCode } : {}) });
       } catch (e) { return out(200, { state: 'error', error: e.message }); }
     }
     if (body.type === 'test') {
