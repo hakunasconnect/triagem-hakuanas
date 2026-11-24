@@ -99,7 +99,10 @@ async function dashboard() {
   app.innerHTML = '<p class="muted">Carregando métricas…</p>';
   try { await load(); } catch (e) { app.innerHTML = `<p class="err" role="alert">${esc(e.message)}</p><button id="o">Sair</button>`; $('#o').onclick = logout; return; }
   const s = data.summary, t = s.totals;
+  // Atalhos: as seções de usuários e alertas ficam no fim da página; no celular são várias telas de rolagem.
+  const jump = [can('manage_users') && ['manage-users', 'Usuários'], (can('manage_whatsapp') || can('view_alerts')) && ['alerts', can('manage_whatsapp') ? 'Alertas e WhatsApp' : 'Alertas'], can('manage_recipients') && ['rec-box', 'Quem recebe'], can('view_alerts') && ['hist-box', 'Últimos alertas']].filter(Boolean);
   app.innerHTML = `<header class="top"><h1>Admin — Triagem Hakunas</h1><div><button id="csv">Exportar CSV</button> <button id="pw">Alterar senha</button> <button id="refresh">Atualizar</button> <button id="out">Sair</button></div></header>
+  ${jump.length ? `<nav class="jump" aria-label="Ir para"><span>Ir para:</span>${jump.map(([id, label]) => `<a href="#${id}">${esc(label)}</a>`).join('')}</nav>` : ''}
   <div id="metrics"><div class="kpis"><div class="kpi"><b>${t.users}</b><span>Usuários</span></div><div class="kpi"><b>${t.activeUsers7d}</b><span>Ativos em 7 dias</span></div><div class="kpi"><b>${t.sessions}</b><span>Sessões</span></div><div class="kpi"><b>${esc(formatDuration(t.totalMs))}</b><span>Tempo de uso</span></div><div class="kpi"><b>${t.triages}</b><span>Triagens concluídas</span></div></div>
   <section class="card"><h2>Últimos 14 dias</h2>${daysChart(s.byDay)}</section>
   <section class="card"><h2>Resultado das triagens (cores)</h2>${colorsBar(s.colors)}<p class="muted">Contagens anônimas: o painel não guarda nome nem dado de saúde de participantes.</p></section>
@@ -120,4 +123,5 @@ async function dashboard() {
 async function logout() { await client.signOut(); profile = data = selected = null; loginView(); }
 
 if (typeof document !== 'undefined') enableFieldEyes(); // botão "olho" em todo campo de senha, inclusive os das telas redesenhadas
-(async () => { if (client.signedIn) { try { await start(); return; } catch {} } loginView(); })();
+// Se o painel falhar ao abrir, a mensagem aparece na tela (antes voltava calado ao login e parecia que "a tela não abre").
+(async () => { if (client.signedIn) { try { await start(); return; } catch (e) { loginView('Não foi possível abrir o painel: ' + (e?.message || 'erro desconhecido')); return; } } loginView(); })();
