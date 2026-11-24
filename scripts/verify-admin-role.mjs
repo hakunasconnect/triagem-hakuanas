@@ -7,6 +7,7 @@ if (!MGMT) throw Error('Defina SUPABASE_ACCESS_TOKEN.');
 const { base, anon, service, session } = await adminSession({ ref: REF, mgmt: MGMT });
 const results = []; const check = (n, ok, d = '') => { results.push(ok); console.log((ok ? 'OK     ' : 'FALHOU ') + n + (ok ? '' : ' -> ' + d)); };
 const users = (tok, body) => fetch(APP + '/api/users', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + tok }, body: JSON.stringify(body) }).then(async r => ({ status: r.status, json: await r.json().catch(() => ({})) }));
+const alertApi = (tok, body) => fetch(APP + '/api/alert', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + tok }, body: JSON.stringify(body) }).then(async r => ({ status: r.status, json: await r.json().catch(() => ({})) }));
 const rest = (tok, path, init = {}) => fetch(base + '/rest/v1/' + path, { ...init, headers: { apikey: anon, Authorization: 'Bearer ' + tok, 'Content-Type': 'application/json', Prefer: 'return=representation', ...(init.headers || {}) } });
 const svc = (p, i = {}) => fetch(base + p, { ...i, headers: { apikey: service, Authorization: 'Bearer ' + service, 'Content-Type': 'application/json', ...(i.headers || {}) } });
 const master = session.access_token, masterId = session.user.id;
@@ -20,9 +21,21 @@ try {
   const adm = (await (await fetch(base + '/auth/v1/token?grant_type=password', { method: 'POST', headers: { apikey: anon, 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password: pass }) })).json()).access_token;
   check('admin consegue entrar', !!adm);
 
-  for (const [t, label] of [['usage_events', 'métricas'], ['alerts', 'alertas'], ['alert_recipients', 'destinatários'], ['alert_settings', 'configuração do WhatsApp'], ['triage_summaries', 'resumos']]) {
+  for (const [t, label] of [['usage_events', 'métricas'], ['alerts', 'alertas'], ['triage_summaries', 'resumos']]) {
     const r = await rest(adm, t + '?select=*&limit=1'); check(`com tudo liberado, admin acessa ${label}`, r.status === 200, 'status ' + r.status);
   }
+  // O que é do admin master é só dele (migração 0008): o admin nem enxerga a configuração do WhatsApp nem os destinatários.
+  // Só leitura e uma inserção com número fictício (apagada ao final): nada real é alterado ou apagado por este teste.
+  for (const [t, label] of [['alert_recipients', 'destinatários'], ['alert_settings', 'configuração do WhatsApp']]) {
+    const rows = await (await rest(adm, t + '?select=id&limit=5')).json();
+    check(`admin não enxerga ${label} (só o admin master)`, Array.isArray(rows) && rows.length === 0, JSON.stringify(rows).slice(0, 100));
+  }
+  const fakeNumber = '55110000' + String(Date.now()).slice(-6);
+  const addRcp = await rest(adm, 'alert_recipients', { method: 'POST', body: JSON.stringify({ name: 'Teste Admin', whatsapp: fakeNumber }) });
+  check('admin não cadastra destinatário', addRcp.status >= 400, 'status ' + addRcp.status);
+  await svc('/rest/v1/alert_recipients?whatsapp=eq.' + fakeNumber, { method: 'DELETE' }); // limpeza, caso a regra falhe
+  const wa = await alertApi(adm, { type: 'wa-status' });
+  check(`admin não consulta nem conecta o WhatsApp (HTTP ${wa.status})`, wa.status === 403, JSON.stringify(wa.json).slice(0, 100));
   const audit = await (await rest(adm, 'audit_log?select=id&limit=1')).json();
   check('admin não lê a auditoria (só o master)', Array.isArray(audit) && audit.length === 0, JSON.stringify(audit));
 
@@ -59,7 +72,6 @@ try {
   const a2 = await (await rest(adm, 'alerts?select=id&limit=1')).json();
   check('sem view_alerts, o admin deixa de ver alertas', Array.isArray(a2) && a2.length === 0, JSON.stringify(a2));
   check('sem manage_users, o admin não gerencia usuários', (await users(adm, { action: 'create', email: `y-${Date.now()}@example.com`, role: 'triador' })).status === 403);
-  const rcp = await rest(adm, 'alert_recipients?select=id&limit=1'); check('manage_recipients ainda liberado: acessa destinatários', rcp.status === 200);
 } finally {
   for (const id of made) await svc('/auth/v1/admin/users/' + id, { method: 'DELETE' });
   if (admId) await svc('/auth/v1/admin/users/' + admId, { method: 'DELETE' });
