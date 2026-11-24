@@ -34,9 +34,6 @@
 .topbar .actions>#open-report-export{grid-column:span 4;grid-row:2}
 .topbar .actions>.spotify-link,.topbar .actions>.shoe-link{grid-column:span 2;grid-row:2;padding:0}
 .spotify-link span,.shoe-link span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-.topbar .actions>#mobile-help,.topbar .actions>.download-link{grid-column:span 6;grid-row:3;font-size:12px;padding:0 6px}
-.topbar:has(.download-link[hidden]) .actions>#mobile-help{grid-column:1/-1}
-.topbar .actions>[hidden]{display:none}
 .topbar .actions>.session-status{grid-column:8/13;grid-row:1;display:block;min-height:0;font-size:10px;line-height:1.25;text-align:right;white-space:normal}
 .sidebar{height:auto;min-height:64px;padding:6px 3px calc(6px + env(safe-area-inset-bottom))}
 .nav button{flex:1 1 0;min-width:0;font-size:10px;line-height:1.15;text-align:center}
@@ -44,3 +41,5 @@
 .content{padding-bottom:calc(96px + env(safe-area-inset-bottom))}
 input,select,textarea{font-size:16px}
 }
+
+.mobile-access .download-link{display:inline-flex;align-items:center}.mobile-access .download-link[hidden]{display:none}@media(max-width:740px){.mobile-access .actions>*{flex:1 1 100%;min-height:42px;justify-content:center;text-align:center}}

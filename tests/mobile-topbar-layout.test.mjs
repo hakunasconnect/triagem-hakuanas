@@ -17,3 +17,16 @@ test('cabeçalho móvel mantém barra fixa e botões com alvo de toque ≥ 38px'
 test('links Spotify e tênis continuam acessíveis por texto mesmo compactos no celular',()=>{
   assert.match(mobile,/\.spotify-link span[^{]*\{[^}]*clip/,'texto visualmente oculto, não removido');
 });
+test('cabeçalho enxuto: ajuda de celular e download offline ficam em Configurações, não na barra fixa',()=>{
+  const app=readFileSync(new URL('../src/app.js',import.meta.url),'utf8');
+  const i=app.indexOf('<header class="topbar">'),j=app.indexOf('</header>',i);
+  const header=app.slice(i,j);
+  assert.ok(i>0&&j>i);
+  assert.doesNotMatch(header,/id="mobile-help"/);
+  assert.doesNotMatch(header,/download-link/);
+  assert.match(header,/id="print-report"/);assert.match(header,/id="open-report-export"/);
+  assert.match(header,/id="spotify-praise"/);assert.match(header,/id="shoe-link"/);
+  const panel=app.slice(app.indexOf('function mobileAccessPanel'),app.indexOf('function configuration'));
+  assert.match(panel,/id="mobile-help"/);assert.match(panel,/download-link/);
+  assert.match(app,/savePreferencesPanel\(savePreferences\)\+mobileAccessPanel\(\)/,'painel renderizado na aba Configurações');
+});
