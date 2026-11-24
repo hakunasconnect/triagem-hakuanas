@@ -4,7 +4,7 @@
 
 .hero-badge{mix-blend-mode:screen}#print-sheet{display:none}@media print{body:has(#print-sheet) #app,body:has(#print-sheet) #modal{display:none!important}#print-sheet{display:block;padding:20px;font-size:12px}#print-sheet .print-fields{columns:2}#print-sheet p{break-inside:avoid;white-space:pre-wrap}#print-sheet details>*{display:block}#print-sheet details{display:block}}
 
-.download-link{font-size:11px;padding:9px 12px;border:1px solid #d9dfd1;border-radius:8px;background:#f5f7ef;text-decoration:none;font-weight:700}.download-link:hover{background:#eaf0df}.source-fields{font-size:12px;overflow-wrap:anywhere;line-height:1.8}#source-text{font-family:ui-monospace,monospace;min-height:180px;font-weight:400}@media(max-width:740px){.topbar{height:auto;min-height:75px;gap:10px;padding-block:12px}.topbar .muted{display:none}.topbar .actions{justify-content:flex-end;max-width:190px}.download-link{font-size:10px}.topbar .session-status{font-size:9px}}
+.download-link{font-size:11px;padding:9px 12px;border:1px solid #d9dfd1;border-radius:8px;background:#f5f7ef;text-decoration:none;font-weight:700}.download-link:hover{background:#eaf0df}.source-fields{font-size:12px;overflow-wrap:anywhere;line-height:1.8}#source-text{font-family:ui-monospace,monospace;min-height:180px;font-weight:400}@media(max-width:740px){.topbar{height:auto;min-height:75px;gap:10px;padding-block:12px}.topbar .muted{display:none}.download-link{font-size:10px}.topbar .session-status{font-size:9px}}
 
 /* Prévia de importação: avisos agrupados e confirmação sempre legível. */
 .modal-body{min-width:0}.modal-body>*{min-width:0}.table-scroll{min-width:0;max-width:100%;width:100%}
@@ -26,12 +26,18 @@
 
 /* Celular (≤740px): barra superior compacta, menu inferior legível e campos sem zoom no iOS. */
 @media(max-width:740px){
-.topbar{position:sticky;top:0;z-index:4;flex-direction:column;align-items:stretch;min-height:0;height:auto;padding:6px 14px 0;gap:3px;box-shadow:0 1px 0 #e4e7df}
-.topbar>div:first-child{font-size:12px;line-height:1.2}
-.topbar .actions{max-width:none;flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start;gap:8px;margin:0 -14px;padding:2px 14px 7px;-webkit-overflow-scrolling:touch;scrollbar-width:none;scroll-snap-type:x proximity;scroll-padding-inline:14px}
-.topbar .actions::-webkit-scrollbar{display:none}
-.topbar .actions>*{flex:0 0 auto;white-space:nowrap;min-height:38px;scroll-snap-align:start}
-.topbar .actions .session-status{align-self:center}
+.topbar{position:sticky;top:0;z-index:4;display:grid;grid-template-columns:repeat(12,minmax(0,1fr));align-items:center;min-height:0;height:auto;padding:8px 14px 10px;gap:8px;box-shadow:0 1px 0 #e4e7df}
+.topbar>div:first-child{grid-column:1/8;font-size:13px;line-height:1.2;min-width:0}
+.topbar .actions{display:contents}
+.topbar .actions>*{min-height:38px;min-width:0;white-space:nowrap;display:flex;align-items:center;justify-content:center;text-align:center;margin:0}
+.topbar .actions>#print-report{grid-column:span 4;grid-row:2}
+.topbar .actions>#open-report-export{grid-column:span 4;grid-row:2}
+.topbar .actions>.spotify-link,.topbar .actions>.shoe-link{grid-column:span 2;grid-row:2;padding:0}
+.spotify-link span,.shoe-link span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.topbar .actions>#mobile-help,.topbar .actions>.download-link{grid-column:span 6;grid-row:3;font-size:12px;padding:0 6px}
+.topbar:has(.download-link[hidden]) .actions>#mobile-help{grid-column:1/-1}
+.topbar .actions>[hidden]{display:none}
+.topbar .actions>.session-status{grid-column:8/13;grid-row:1;display:block;min-height:0;font-size:10px;line-height:1.25;text-align:right;white-space:normal}
 .sidebar{height:auto;min-height:64px;padding:6px 3px calc(6px + env(safe-area-inset-bottom))}
 .nav button{flex:1 1 0;min-width:0;font-size:10px;line-height:1.15;text-align:center}
 .nav button span{display:block;overflow-wrap:anywhere}
