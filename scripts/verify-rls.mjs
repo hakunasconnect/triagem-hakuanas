@@ -1,9 +1,10 @@
 // Prova, contra o banco REAL, que as regras de acesso (RLS) isolam os usuários.
-// Uso: SUPABASE_ACCESS_TOKEN=... ADMIN_EMAIL=... ADMIN_PASSWORD=... node scripts/verify-rls.mjs
+// Uso: SUPABASE_ACCESS_TOKEN=... node scripts/verify-rls.mjs  (o admin entra por sessão de teste, sem senha)
 // Cria um usuário descartável, tenta as violações e o remove ao final. Nenhuma chave é impressa.
 const REF = process.env.SUPABASE_REF || 'wwfkazbjiutihtexqknm';
-const { SUPABASE_ACCESS_TOKEN: MGMT, ADMIN_EMAIL, ADMIN_PASSWORD } = process.env;
-if (!MGMT || !ADMIN_EMAIL || !ADMIN_PASSWORD) throw Error('Defina SUPABASE_ACCESS_TOKEN, ADMIN_EMAIL e ADMIN_PASSWORD.');
+import { adminSession } from './lib/admin-session.mjs';
+const { SUPABASE_ACCESS_TOKEN: MGMT } = process.env;
+if (!MGMT) throw Error('Defina SUPABASE_ACCESS_TOKEN.');
 const base = `https://${REF}.supabase.co`;
 const keys = await (await fetch(`https://api.supabase.com/v1/projects/${REF}/api-keys?reveal=true`, { headers: { Authorization: 'Bearer ' + MGMT } })).json();
 const anon = keys.find(k => k.name === 'anon')?.api_key, service = keys.find(k => k.name === 'service_role')?.api_key;
@@ -16,7 +17,8 @@ const login = async (email, password) => { const r = await fetch(base + '/auth/v
 const testEmail = `rls-${Date.now()}@example.com`, testPass = 'T3ste-' + Math.random().toString(36).slice(2) + 'Aa1!';
 const created = await (await fetch(base + '/auth/v1/admin/users', { method: 'POST', headers: { apikey: service, Authorization: 'Bearer ' + service, 'Content-Type': 'application/json' }, body: JSON.stringify({ email: testEmail, password: testPass, email_confirm: true }) })).json();
 try {
-  const admin = await login(ADMIN_EMAIL, ADMIN_PASSWORD);
+  const as = await adminSession({ ref: REF, mgmt: MGMT });
+  const admin = { token: as.session.access_token, id: as.session.user.id };
   const user = await login(testEmail, testPass);
   check('admin consegue entrar com e-mail e senha', !!admin.token);
 

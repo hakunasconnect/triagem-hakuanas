@@ -17,3 +17,12 @@ O código 1.1 já contém OCR local incorporado. O novo prompt descreve versão 
 As cinco skills citadas (Git Guardrails, Planning With Files, Webapp Testing, Trail of Bits Security, Document Skills) não foram encontradas no catálogo na execução que criou este arquivo. Não alegar carregamento. Instalações futuras exigem revisar origem oficial, SKILL.md, licença, manutenção, compatibilidade e permissões, sem presumir os selos editoriais do guia como certificação.
 
 No encerramento, registrar causa, arquivos, comandos/resultados, SHA apenas se checkpoint realmente ocorreu, limites não testados e próximo item. Manter documentação e evidências locais; sem publicação automática.
+
+## Decisão do responsável — 23/11/2026 (admin, alertas e Supabase)
+
+O usuário (Dr. Edson Barroso, médico responsável e único admin master) decidiu que a regra "Não enviar dados de saúde
+a nuvem/API" **não se aplica ao fluxo de alertas e resumo da triagem**: os dados já foram coletados em planilhas e o app
+apenas auxilia o julgamento. Nome, idade, telefone, e-mail e motivos de casos vermelhos/pretos são enviados por WhatsApp
+(Evolution) e guardados no Supabase com acesso só do admin master. Detalhes e salvaguardas em `docs/ADMIN-E-ALERTAS.md`.
+A regra de privacidade continua valendo para o restante do app e para qualquer envio a IA externa (Gemini): sem nova
+autorização, não enviar dados de participantes a APIs de IA.

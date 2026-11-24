@@ -1,0 +1,64 @@
+# Admin, login do triador e alertas por WhatsApp
+
+Atualizado em 23/11/2026. Produção: https://triagemhakunas.vercel.app (app) e `/admin` (painel).
+Repositório oficial: `hakunasconnect/triagem-hakuanas` (cada envio à `main` publica sozinho na Vercel).
+
+## Decisão do responsável (registrada em 23/11/2026)
+
+O Dr. Edson Barroso é o médico responsável e o **único admin master**. Os dados dos participantes já foram
+coletados em planilhas e o app apenas ajuda a julgar a triagem. Por decisão dele, **a proibição de enviar dados
+de saúde à nuvem não se aplica a este fluxo**: alertas de risco (vermelho/preto) e o resumo da triagem são
+enviados por WhatsApp (Evolution) e guardados no Supabase, com leitura só do admin master. O restante do app
+continua local e offline.
+
+## Peças
+
+| Peça | Onde | O que faz |
+|---|---|---|
+| App de triagem | `src/app.js` | Importa planilhas, calcula cor/faixa (motor determinístico), login opcional do triador |
+| Registro de uso | `src/telemetry.js` | Sessões e ações **anônimas** (sem dado de participante) no Supabase |
+| Painel admin | `src/admin/*` → `dist/admin.html` | Métricas, usuários, alertas, destinatários, conexão do WhatsApp |
+| Alertas | `api/alert.js` + `src/alerts/*` | Aviso de quem está triando, alerta de risco, resumo, QR do WhatsApp |
+| Usuários | `api/users.js` + `src/users/handler.js` | Criar/editar/trocar senha/apagar usuários (só admin master) |
+| Banco | `supabase/migrations/0001…0005` | Tabelas, RLS, um único admin master |
+
+## O que chega no WhatsApp
+
+1. **Quem está triando**: ao entrar no app e ao iniciar a triagem (importação).
+2. **Alerta individual** (vermelho/preto) ao salvar uma ficha: nome, idade, motivos, telefone, e-mail.
+3. **Resumo da triagem**, logo após a importação e ao gerar relatório (sem repetir se nada mudou): totais por cor e,
+   caso a caso, pretos e depois vermelhos com nome, idade, telefone, e-mail e motivos.
+   Todas as mensagens dizem "requer avaliação humana (não é diagnóstico)". Cor, faixa e motivos vêm do motor
+   determinístico (`src/core.js`); nada é inferido por IA.
+
+## Regras de segurança
+
+- **Um único admin master** (índice único no banco). Ninguém cria outro; o papel dele não pode ser rebaixado pelo painel.
+- Só o admin master lê alertas, resumos, destinatários e a configuração da Evolution; gravação só pelo servidor.
+- Chaves (`SUPABASE_SERVICE_ROLE_KEY`, `EVOLUTION_API_KEY`) ficam **só como segredos da Vercel**; nunca no código.
+  A chave anon do Supabase é pública por desenho (protegida por RLS).
+- Usuários criados nascem com senha provisória e **troca obrigatória** no primeiro acesso.
+- O histórico de auditoria (`audit_log`) é somente leitura, nem o admin o apaga pelo painel.
+
+## Variáveis de ambiente (Vercel, produção)
+
+- `SUPABASE_SERVICE_ROLE_KEY` — chave de serviço do projeto `wwfkazbjiutihtexqknm`.
+- `EVOLUTION_API_KEY` — chave global da Evolution (`https://evo.n8ndredson.com`). Se for trocada no servidor da
+  Evolution, atualizar aqui (`vercel env add EVOLUTION_API_KEY production --sensitive`).
+
+A instância do WhatsApp se chama `triagem-hakunas` e é criada sozinha pelo botão "Conectar WhatsApp" do painel.
+
+## Verificação (rodar após publicar)
+
+```
+node --test tests/*.test.mjs                    # unitários (npm test)
+node scripts/verify-rls.mjs                     # isolamento do banco
+node scripts/verify-alert-api.mjs               # /api/alert no site publicado
+node scripts/verify-whatsapp-connect.mjs        # QR / estado do WhatsApp
+node tests/browser-admin.mjs                    # painel no Chromium real (CHROME_PATH, SHOTS_DIR)
+node tests/browser-telemetry.mjs                # login do triador + registro de uso no app publicado
+```
+
+Todos exigem `SUPABASE_ACCESS_TOKEN` (token pessoal do Supabase; revogue após o uso). Os testes ao vivo criam usuários
+descartáveis (`@example.com`) e removem ao final; o do painel entra com uma sessão de teste do admin (sem criar
+outro admin) e restaura a configuração do WhatsApp que encontrar.

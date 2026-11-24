@@ -9,7 +9,7 @@ export function alertsPanel({ settings: s = {}, recipients: rs = [], alerts: al 
     return ok + '/' + d.length + (d[0]?.error && !d[0]?.whatsapp ? ' · ' + esc(d[0].error) : '');
   };
   const recipientRows = rs.map(r => `<tr><td>${esc(r.name)}</td><td>${esc(r.whatsapp)}</td><td><input type="checkbox" data-toggle="${esc(r.id)}" ${r.active ? 'checked' : ''} style="width:auto" aria-label="Ativo"></td><td><button data-del="${esc(r.id)}">Remover</button></td></tr>`).join('');
-  const alertRows = al.map(a => `<tr><td>${esc(fmt(a.created_at))}</td><td>${esc(a.participant_name)}</td><td><span class="pill">${a.color === 'black' ? 'Preto' : 'Vermelho'}</span></td><td>${esc((a.reasons || []).join('; '))}</td><td class="hide-sm muted">${esc(a.participant_phone)} ${esc(a.participant_email)}</td><td>${status(a)}</td></tr>`).join('');
+  const alertRows = al.map(a => `<tr><td>${esc(fmt(a.created_at))}</td><td>${esc(a.participant_name)}</td><td><span class="pill">${a.color === 'black' ? 'Preto' : 'Vermelho'}</span></td><td>${esc((a.reasons || []).join('; '))}</td><td class="hide-sm muted">${esc(a.participant_phone)} ${esc(a.participant_email)}</td><td>${status(a)}</td><td><button data-delalert="${esc(a.id)}" aria-label="Apagar alerta">Apagar</button></td></tr>`).join('');
   return `<section class="card" id="alerts"><h2>Alertas por WhatsApp (Evolution)</h2>
   <p class="muted">Quando uma triagem sai <strong>vermelha ou preta</strong>, os números abaixo recebem nome, motivos, telefone e e-mail. Só você, como admin, vê estes dados.</p>
   <div id="wa-box"><p id="wa-status" role="status">Verificando a conexão do WhatsApp…</p><div id="wa-qr"></div><button class="primary" type="button" id="wa-connect">Conectar WhatsApp (gerar QR code)</button>
@@ -30,7 +30,7 @@ export function alertsPanel({ settings: s = {}, recipients: rs = [], alerts: al 
   <label for="rec-num">WhatsApp com DDI e DDD (ex.: 5511999990000)</label><input id="rec-num" inputmode="numeric" required>
   <p class="err" id="rec-msg" role="alert"></p><button type="submit">Adicionar número</button></form>
   <h2 style="margin-top:18px">Últimos alertas</h2>
-  ${al.length ? `<div class="scroll"><table><thead><tr><th>Quando</th><th>Pessoa</th><th>Cor</th><th>Motivos</th><th class="hide-sm">Contato</th><th>Enviado</th></tr></thead><tbody>${alertRows}</tbody></table></div>` : '<p class="muted">Nenhum alerta ainda.</p>'}</section>`;
+  ${al.length ? `<div class="scroll"><table><thead><tr><th>Quando</th><th>Pessoa</th><th>Cor</th><th>Motivos</th><th class="hide-sm">Contato</th><th>Enviado</th><th></th></tr></thead><tbody>${alertRows}</tbody></table></div>` : '<p class="muted">Nenhum alerta ainda.</p>'}</section>`;
 }
 
 export function bindAlerts({ client, app, refresh }) {
@@ -109,5 +109,6 @@ export function bindAlerts({ client, app, refresh }) {
     catch { say('rec-msg', 'Não foi possível adicionar (número já cadastrado?).'); }
   };
   app.querySelectorAll('[data-toggle]').forEach(c => { c.onchange = async () => { try { await client.rest('alert_recipients?id=eq.' + encodeURIComponent(c.dataset.toggle), { method: 'PATCH', body: JSON.stringify({ active: c.checked }) }); } catch { c.checked = !c.checked; } }; });
+  app.querySelectorAll('[data-delalert]').forEach(b => { b.onclick = async () => { if (!confirm('Apagar este alerta do histórico?')) return; try { await client.rest('alerts?id=eq.' + encodeURIComponent(b.dataset.delalert), { method: 'DELETE' }); await refresh(); } catch {} }; });
   app.querySelectorAll('[data-del]').forEach(b => { b.onclick = async () => { if (!confirm('Remover este número?')) return; try { await client.rest('alert_recipients?id=eq.' + encodeURIComponent(b.dataset.del), { method: 'DELETE' }); await refresh(); } catch {} }; });
 }

@@ -1,5 +1,11 @@
 # Estado local — manutenção de 10/11/2026
 
+## Admin e alertas (23/11/2026)
+
+- Painel /admin, login do triador, registro de uso anônimo, alertas e resumo por WhatsApp, gestão de usuários (um único admin master). Ver docs/ADMIN-E-ALERTAS.md.
+- Repositório oficial e deploy automático: hakunasconnect/triagem-hakuanas → Vercel (triagemhakunas.vercel.app).
+
+
 ## Estado atual (23/11/2026)
 
 - Versão 1.8.3; `npm test`: 208/208 aprovados; CI verde no repositório novo.
