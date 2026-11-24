@@ -55,7 +55,7 @@ o aviso de início de triagem segue o mesmo caminho da importação de arquivo.
 
 ## Privacidade (LGPD)
 
-- O formulário abre com um **consentimento** (texto proposto, a ser revisado pelo responsável) e termina com declaração de veracidade.
+- O formulário abre com um **consentimento** (texto aprovado pelo responsável em 24/11/2026, na versão original; ele não cita o controlador, o prazo de guarda nem a passagem dos dados pelo Google) e termina com declaração de veracidade.
 - O dado fica no Google (formulário e planilha), no e-mail da coordenação e no Supabase. No Supabase: gravação só pelo servidor,
   leitura direta só do admin master e do admin com `view_alerts`, apagar só o admin master. Os triadores leem pela função do servidor.
 - O segredo de envio fica na Vercel (sensível) e no script, que mora na conta Google da coordenação: quem editar o formulário vê o segredo.
@@ -78,5 +78,10 @@ npm run build && CHROME_PATH=... node tests/browser-forms-import.mjs     # janel
 ```
 
 O script do Google é executado, nos testes, num simulador do Google Apps Script (estrutura do formulário, contrato com o app,
-cadeia resposta → e-mail → servidor → participante). **Não** foi executado no Google de verdade por quem o escreveu: o primeiro
-uso real (`criarFormulario` e `testarConexao`) é a prova final.
+cadeia resposta → e-mail → servidor → participante). Em 24/11/2026 foi executado no Google de verdade, na conta da coordenação: `criarFormulario` concluiu sem erro, `testarConexao` devolveu
+`HTTP 200 {"ok":true,"test":true}` e uma inscrição de teste com dados inventados chegou ao e-mail, à planilha e à janela
+"Inscrições do formulário" do site (relato do responsável). O gatilho `aoEnviar` disparou sozinho (tela Execuções do Apps Script: tipo
+Acionar, concluído em 6 s, 0% de erro) e o e-mail "Nova ficha de saúde" está na caixa da coordenação. A importação também funcionou em produção: a inscrição ficou com status `importado` no banco e o participante entrou na lista da
+sessão (lista colada pelo responsável e leitura do banco). Não conferido: o aviso de início de triagem no WhatsApp e o aviso
+"autodeclarado" na ficha. Antes, o
+script só havia rodado no simulador.
