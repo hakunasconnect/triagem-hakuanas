@@ -1,0 +1,115 @@
+Triagem Hakunas v1.8.3 / Critérios e fontes
+🖨 Imprimir
+Exportar
+Ouvir louvores
+Ver tênis
+Sessão local · sem sincronização
+Logo da base
+não informada
+TOP —
+LOCAL NÃO INFORMADO
+NOME DA BASE NÃO INFORMADO
+Triador não informado
+Logo dos Legendários
+não informada
+LEGENDÁRIOS / TRANSPARÊNCIA
+Critérios e fontes
+
+Consulte, edite e adicione critérios com controle de versão.
+
+Score interno Hakunas — critérios configuráveis
+
+Hakunas — base original · revisão 1
+Responsável: Base incorporada — exige revisão profissional
+Fonte: Manual Hakunas 1.0 (07/12/2025); cores do relatório consolidado de 10/11/2026 e regra operacional etária do responsável.
+Motivo da versão: Preservação das regras originais; não constitui validação clínica externa.
+
+Editar critérios / adicionar
+Aplicar versão ativa às fichas existentes
+
+Salvar uma nova versão vale para novas fichas. As existentes conservam a versão usada até aplicação explícita. Alterar critérios não valida clinicamente o protocolo; a versão adaptada não deve ser apresentada como transcrição intacta do manual original. Campos vazios não são interpretados como respostas negativas.
+
+Faixa	Pontos
+Baixa	0–7
+Moderada	8–15
+Alta	16–25
+Muito alta	26 ou mais
+Histórico
+Critério	Condição	Pontos	Cor	Exclusão / estado
+Hipertensão	Resposta explicitamente assinalada	+2	Vermelho	Não exclui · Ativo
+Colesterol alto	Resposta explicitamente assinalada	+1	Sem cor adicional	Não exclui · Ativo
+Problemas cardíacos	Resposta explicitamente assinalada	+4	Vermelho	Não exclui · Ativo
+Dor no peito ao esforço	Resposta explicitamente assinalada	+4	Sem cor adicional	Não exclui · Ativo
+Desmaio sem causa clara	Resposta explicitamente assinalada	+4	Sem cor adicional	Não exclui · Ativo
+Diabetes tipo 1	Resposta explicitamente assinalada	+4	Vermelho	Não exclui · Ativo
+Diabetes tipo 2	Resposta explicitamente assinalada	+3	Vermelho	Não exclui · Ativo
+Resistência à insulina	Resposta explicitamente assinalada	+1	Sem cor adicional	Não exclui · Ativo
+Medicamentos
+Critério	Condição	Pontos	Cor	Exclusão / estado
+Medicação para pressão	Resposta explicitamente assinalada	+1	Amarelo	Não exclui · Ativo
+Medicação para diabetes	Resposta explicitamente assinalada	+2	Amarelo	Não exclui · Ativo
+Medicação para colesterol	Resposta explicitamente assinalada	+1	Amarelo	Não exclui · Ativo
+Corticoides	Resposta explicitamente assinalada	+3	Amarelo	Não exclui · Ativo
+Anticoagulantes	Resposta explicitamente assinalada	+3	Amarelo	Exclusão · Ativo
+Antidepressivos / ansiolíticos	Resposta explicitamente assinalada	+2	Amarelo	Não exclui · Ativo
+Inaladores para asma	Resposta explicitamente assinalada	+1	Amarelo	Não exclui · Ativo
+Sintomas
+Critério	Condição	Pontos	Cor	Exclusão / estado
+Falta de ar ao caminhar	Resposta explicitamente assinalada	+3	Sem cor adicional	Não exclui · Ativo
+Dor no peito	Resposta explicitamente assinalada	+4	Sem cor adicional	Não exclui · Ativo
+Palpitações fortes	Resposta explicitamente assinalada	+3	Sem cor adicional	Não exclui · Ativo
+Tontura ou desmaio	Resposta explicitamente assinalada	+4	Sem cor adicional	Não exclui · Ativo
+Inchaço nas pernas	Resposta explicitamente assinalada	+3	Sem cor adicional	Não exclui · Ativo
+Febre ou doença aguda	Resposta explicitamente assinalada	+2	Sem cor adicional	Exclusão · Ativo
+Dor articular ao caminhar	Resposta explicitamente assinalada	+1	Sem cor adicional	Não exclui · Ativo
+Exclusões
+Critério	Condição	Pontos	Cor	Exclusão / estado
+Grande cirurgia nos últimos 3 meses	Resposta explicitamente assinalada	+0	Sem cor adicional	Exclusão · Ativo
+Dor no peito ao mínimo esforço	Resposta explicitamente assinalada	+0	Sem cor adicional	Exclusão · Ativo
+Síncope recente	Resposta explicitamente assinalada	+0	Sem cor adicional	Exclusão · Ativo
+Doença cardíaca não controlada	Resposta explicitamente assinalada	+0	Sem cor adicional	Exclusão · Ativo
+Diabetes tipo 1 sem controle estrito	Resposta explicitamente assinalada	+0	Sem cor adicional	Exclusão · Ativo
+Asma severa mal controlada	Resposta explicitamente assinalada	+0	Sem cor adicional	Exclusão · Ativo
+Anafilaxia sem autoinjetor	Resposta explicitamente assinalada	+0	Sem cor adicional	Exclusão · Ativo
+Problema psiquiátrico grave	Resposta explicitamente assinalada	+0	Sem cor adicional	Exclusão · Ativo
+IMC > 40	IMC adulto > 40	+0	Sem cor adicional	Exclusão · Ativo
+Fatores adicionais
+Critério	Condição	Pontos	Cor	Exclusão / estado
+História de convulsão	Resposta explicitamente assinalada	+0	Preto	Não exclui · Ativo
+Implante — critério de cor pendente	Resposta explicitamente assinalada	+0	Sem cor adicional	Não exclui · Ativo · Revisão pendente
+Outra doença informada	Resposta explicitamente assinalada	+0	Vermelho	Não exclui · Ativo
+Limitação cirúrgica	Resposta explicitamente assinalada	+0	Vermelho	Não exclui · Ativo
+IMC > 30	IMC adulto > 30	+2	Amarelo	Não exclui · Ativo
+Idade > 60	Idade > 60	+0	Vermelho	Não exclui · Ativo
+Idade > 60 associada a doença	Idade > 60 e um destes fatores: disease, htn, heart, dm1, dm2	+0	Preto	Não exclui · Ativo
+Atividade física — 3 ou mais vezes / semana	Atividade física = 3 ou mais vezes / semana	+0	Sem cor adicional	Não exclui · Ativo
+Atividade física — 1–2 vezes / semana	Atividade física = 1–2 vezes / semana	+1	Sem cor adicional	Não exclui · Ativo
+Atividade física — Raramente	Atividade física = Raramente	+2	Sem cor adicional	Não exclui · Ativo
+Atividade física — Não realiza	Atividade física = Não realiza	+3	Sem cor adicional	Não exclui · Ativo
+Caminhada 10 km — Sim	Caminhada 10 km = Sim	+0	Sem cor adicional	Não exclui · Ativo
+Caminhada 10 km — Não tentou	Caminhada 10 km = Não tentou	+1	Sem cor adicional	Não exclui · Ativo
+Caminhada 10 km — Não	Caminhada 10 km = Não	+2	Sem cor adicional	Exclusão · Ativo
+Vacina antitetânica — Sim	Vacina antitetânica = Sim	+0	Sem cor adicional	Não exclui · Ativo
+Vacina antitetânica — Não / não sabe	Vacina antitetânica = Não / não sabe	+1	Sem cor adicional	Não exclui · Ativo
+Caminhadas prévias — Sim	Caminhadas prévias = Sim	+0	Sem cor adicional	Não exclui · Ativo
+Caminhadas prévias — Não	Caminhadas prévias = Não	+1	Sem cor adicional	Não exclui · Ativo
+
+Salvaguardas etárias preservadas: 16–17 anos = vermelho; preto exige outro critério explícito. Menores não recebem IMC/faixa adulta. A faixa depende da revisão completa e não libera participação. Implante permanece pendente na base original; qualquer mudança exige edição explícita e autoria.
+
+O catálogo completo e a versão de cada ficha acompanham os relatórios e o backup protegido. As versões permanecem na sessão; salve o backup para conservá-las.
+
+Instrumentos externos
+
+IMC e CKD-EPI são calculados separadamente. Não alteram a ficha automaticamente.
+
+NIDDK — equações de TFGe em adultos
+
+PAR-Q+ oficial — formulário externo; não reproduzido no aplicativo.
+
+Framingham, KFRE e rastreio ACSM citados no relatório anterior ainda não estão implementados nesta versão.
+
+© 2026 Dr. Edson Barroso dos Santos Júnior · LGND 203460
+edson.barroso@gnail.com · @dredsonbarroso · www.dredsonbarroso.com.br
+TRIAGEM HAKUNAS · V1.8.3
+Apoio à avaliação profissional
+Desenvolvido por Dr. Edson Barroso · Hakuna nº 203460 · Instagram @dredsonbarrosod

@@ -1,0 +1,533 @@
+<section class="capa">
+  <div class="marca">Legendários · Hakunas</div>
+  <h1>Manual do<br>Triador</h1>
+  <div class="barra"></div>
+  <div class="sub">Passo a passo completo para usar o aplicativo Triagem Hakunas na triagem de saúde dos participantes.</div>
+  <div class="versao">
+    Aplicativo: Triagem Hakunas, versão 1.8.3<br>
+    Manual elaborado em 24 de novembro de 2026<br>
+    Apoio à avaliação profissional. Este manual ensina a usar o aplicativo; ele não diagnostica, não libera ninguém para esforço físico e não substitui a decisão do médico responsável.
+  </div>
+</section>
+
+<section class="sumario">
+  <h1>Sumário</h1>
+  {{TOC}}
+</section>
+
+<h1 id="c0"><span class="n">0</span> Como usar este manual</h1>
+<p>Este manual foi escrito para quem vai <b>triar os participantes</b> e nunca usou o aplicativo. Siga os capítulos na ordem na primeira vez. Depois, use o sumário para voltar ao ponto que precisar. A última página é uma <b>folha de consulta rápida</b>, que vale a pena imprimir.</p>
+<h2>Como ler as imagens</h2>
+<ul>
+  <li>As telas são do aplicativo de verdade, mas com <b>participantes e dados inventados</b>. Nenhuma pessoa real aparece neste manual.</li>
+  <li>Os <b>números vermelhos</b> em cima das telas apontam o que você deve olhar ou clicar. A legenda de cada figura explica cada número.</li>
+  <li>Os nomes de botões aparecem assim: <span class="k">Novo participante</span>. Os nomes de menus aparecem assim: <span class="menu">Configurações</span>.</li>
+</ul>
+<h2>Os quadros coloridos</h2>
+<div class="box regra"><b>Regra</b><p>Algo que vale sempre. Não pule.</p></div>
+<div class="box atencao"><b>Atenção</b><p>Um erro aqui pode causar perda de dados ou uma leitura errada do resultado.</p></div>
+<div class="box importante"><b>Importante</b><p>Um detalhe que muda como você deve agir.</p></div>
+<div class="box dica"><b>Dica</b><p>Um atalho ou um jeito mais fácil de fazer.</p></div>
+
+<h1 id="c1"><span class="n">1</span> O que o aplicativo faz e o que ele não faz</h1>
+<p>O Triagem Hakunas é uma ferramenta de <b>apoio</b> da equipe de saúde. Ele guarda a ficha de cada participante, soma pontos pelos critérios que você marcar, mostra uma <b>cor de atenção provisória</b> e uma <b>faixa</b>, e ajuda a imprimir e guardar tudo.</p>
+<table>
+  <thead><tr><th style="width:50%">O aplicativo faz</th><th>O aplicativo NÃO faz</th></tr></thead>
+  <tbody><tr>
+    <td><ul><li>Organiza as fichas de todos os participantes.</li><li>Soma os pontos dos critérios marcados.</li><li>Mostra a cor (Verde, Amarelo, Vermelho ou Preto) e a faixa de pontos.</li><li>Avisa o que ainda está pendente em cada ficha.</li><li>Gera relatórios e backup protegido.</li></ul></td>
+    <td><ul><li><b>Não faz diagnóstico.</b></li><li><b>Não libera ninguém</b> para o esforço físico.</li><li>Não substitui o atestado de aptidão física.</li><li>Não substitui a avaliação do médico responsável.</li><li>Não adivinha respostas: o que não for marcado fica como “não informado”.</li></ul></td>
+  </tr></tbody>
+</table>
+<div class="box regra"><b>Texto que o próprio aplicativo mostra</b><p>“Cores e pontuação não equivalem a diagnóstico ou autorização para atividade física. A decisão é do profissional responsável.”</p></div>
+
+<h2>As 7 regras de ouro da triagem</h2>
+<ol>
+  <li><b>Marque só o que foi confirmado</b> pelo participante ou por um documento. Campo vazio não quer dizer “não tem”. Quer dizer “não informado”.</li>
+  <li><b>Verde não significa liberado.</b> Verde quer dizer apenas “nenhum fator de cor foi marcado”.</li>
+  <li><b>Exclusão pede o médico.</b> Se a ficha mostrar “Critérios de exclusão — revisão obrigatória”, chame o médico responsável, <b>mesmo que a cor esteja Verde</b>.</li>
+  <li><b>Vermelho e Preto também vão ao médico responsável.</b> O aplicativo só destaca. Quem decide é o profissional.</li>
+  <li><b>Salve o backup com frequência.</b> Os participantes ficam só na memória da aba do navegador. Se a página for fechada ou atualizada, tudo pode ser apagado.</li>
+  <li><b>Os dados de saúde são sigilosos.</b> Não tire foto da tela, não envie planilhas ou relatórios em grupos de mensagem e guarde os arquivos em local seguro.</li>
+  <li><b>Participantes de 16 e 17 anos ficam sempre Vermelhos</b> e não recebem IMC nem faixa de adulto. O aplicativo não aceita idade abaixo de 16 anos.</li>
+</ol>
+
+<h1 id="c2"><span class="n">2</span> Abrindo o aplicativo</h1>
+<p>Há três jeitos de abrir o aplicativo. Escolha o que combina com o seu aparelho e com a internet do local.</p>
+<table>
+  <thead><tr><th style="width:23%">Jeito</th><th>Como fazer</th><th style="width:22%">Internet</th></tr></thead>
+  <tbody>
+    <tr><td><b>Pelo site</b></td><td>No navegador (Chrome, Edge ou Safari), abra <span class="mono">https://triagemhakunas.vercel.app</span>. É o único jeito em que funcionam a <b>conta do triador</b> e as <b>Inscrições do formulário</b>.</td><td>Precisa de internet para abrir.</td></tr>
+    <tr><td><b>Arquivo HTML offline</b></td><td>Em <span class="menu">Configurações</span>, clique em <span class="k">↓ Baixar HTML offline</span>. Guarde o arquivo e abra-o <b>pelo navegador</b>. No computador, dê duplo clique no arquivo.</td><td>Funciona sem internet. Não tem login nem formulário.</td></tr>
+    <tr><td><b>Atalho no celular</b></td><td><b>iPhone:</b> abra o site no Safari, toque em Compartilhar e em “Adicionar à Tela de Início”. <b>Android:</b> abra o site no Chrome e use a opção de instalar ou adicionar à tela inicial.</td><td>A primeira abertura precisa de internet.</td></tr>
+  </tbody>
+</table>
+<div class="box atencao"><b>Tela branca ao abrir o arquivo</b><p>Se você receber o arquivo HTML pelo WhatsApp ou pelo Drive e tocar nele, o celular pode abrir uma <b>prévia</b> que não executa o aplicativo, e a tela fica branca. Salve o arquivo e abra-o pelo <b>navegador</b>.</p></div>
+<div class="box importante"><b>Teste antes do evento</b><p>O próprio aplicativo recomenda testar no aparelho, com dados inventados, <b>em modo avião</b>, antes de depender dele no dia. Teste também o backup e a restauração (capítulo 9).</p></div>
+<div class="box atencao"><b>Os participantes ficam na memória da aba</b><p>O aplicativo não tem banco de dados dos participantes. “As fichas ficam na memória desta aba. Atualizar ou fechar o navegador pode apagar os dados.” <b>Não atualize a página</b> (F5) e não feche a aba sem antes salvar o backup.</p></div>
+
+<h1 id="c3"><span class="n">3</span> Conhecendo a tela</h1>
+<p>Esta é a tela inicial, na aba <span class="menu">Participantes</span>.</p>
+<figure><img src="img/01-visao-geral.jpg" alt="Tela inicial do aplicativo"><figcaption>Tela inicial do aplicativo, ainda sem participantes.</figcaption>
+<ol class="leg"><li>Menu lateral: as cinco áreas do aplicativo.</li><li>Importar lista: traz participantes de uma planilha ou arquivo.</li><li>Inscrições do formulário: traz quem se inscreveu sozinho.</li><li>Novo participante: abre uma ficha em branco.</li><li>Imprimir: abre as opções de impressão.</li><li>Exportar: abre as opções de salvar relatórios.</li></ol></figure>
+<h2>As cinco áreas do menu</h2>
+<table>
+  <thead><tr><th style="width:27%">Área</th><th>Para que serve</th></tr></thead>
+  <tbody>
+    <tr><td><span class="menu">Participantes</span></td><td>É onde você trabalha: cadastra, importa, abre fichas, procura e acompanha cada pessoa.</td></tr>
+    <tr><td><span class="menu">Calculadoras</span></td><td>IMC e TFGe (função dos rins). Resultados separados da ficha.</td></tr>
+    <tr><td><span class="menu">Critérios e fontes</span></td><td>Mostra todas as regras de pontos e cores, e de onde elas vêm. Para consulta.</td></tr>
+    <tr><td><span class="menu">Arquivos e segurança</span></td><td>Backup protegido, restauração e apagar a sessão.</td></tr>
+    <tr><td><span class="menu">Configurações</span></td><td>Identificação do TOP, conta do triador e preferências de salvar arquivos.</td></tr>
+  </tbody>
+</table>
+<h2>A barra de cima</h2>
+<p>No alto da tela ficam os botões <span class="k">Imprimir</span> e <span class="k">Exportar</span>, o número da versão do aplicativo (<b>v1.8.3</b>) e o aviso <b>“Sessão local · sem sincronização”</b>. Esse aviso lembra que o que você digita fica só neste aparelho, nesta aba. Os botões <span class="k">Ouvir louvores</span> e <span class="k">Ver tênis</span> abrem links externos em outra aba e não mexem na triagem.</p>
+<h2>O painel de números</h2>
+<figure><img src="img/32-painel.jpg" alt="Quatro cartões com números"><figcaption>Os quatro cartões de números da aba Participantes.</figcaption>
+<ol class="leg"><li>Participantes: quantas pessoas estão cadastradas nesta sessão.</li><li>Avaliações pendentes: fichas que ainda aguardam revisão completa.</li><li>Revisões completas: fichas com a documentação conferida.</li><li>Atenção prioritária: casos Vermelho, Preto ou com critério de exclusão.</li></ol></figure>
+<div class="box importante"><b>O que entra em “Atenção prioritária”</b><p>Só os casos <span class="chip vermelho">Vermelho</span>, <span class="chip preto">Preto</span> e os que têm <b>critério de exclusão</b>. Quem está <span class="chip amarelo">Amarelo</span> ou <span class="chip verde">Verde</span> <b>não</b> aparece nesse cartão.</p></div>
+
+<h1 id="c4"><span class="n">4</span> Preparando o TOP</h1>
+<p>Faça isto uma vez, antes de começar a triar. Os dados que você preencher aparecem no cabeçalho das telas, da impressão, dos relatórios e do backup.</p>
+<h2 id="c4-1">Identificação do TOP</h2>
+<ol class="passos">
+  <li>No menu lateral, clique em <span class="menu">Configurações</span>.</li>
+  <li>Role até o quadro <b>Identificação do TOP</b> e preencha os campos numerados na figura.</li>
+  <li>Se tiver os arquivos de imagem, clique em <span class="k">Escolher arquivo</span> para o logo da base (lado esquerdo) e o logo dos Legendários (lado direito). Aceita PNG, JPEG e WebP de até 5 MiB. Escolha também se o fundo do logo é <b>Claro</b> ou <b>Escuro</b>.</li>
+  <li>Clique em <span class="k go">Salvar identificação do TOP</span>.</li>
+  <li>Volte para <span class="menu">Participantes</span> e confira o cabeçalho.</li>
+</ol>
+<figure class="p60"><img src="img/02-config-top.jpg" alt="Identificação do TOP"><figcaption>Quadro Identificação do TOP, preenchido com dados de exemplo.</figcaption>
+<ol class="leg"><li>Número do TOP.</li><li>Local do TOP.</li><li>Nome da base.</li><li>Nome do triador.</li><li>Número de Legendário do triador.</li><li>Salvar identificação do TOP.</li></ol></figure>
+<figure><img src="img/06-cabecalho-top.jpg" alt="Cabeçalho do TOP"><figcaption>Cabeçalho do TOP depois de salvar. Sem logos, aparece “Logo da base não informada”.</figcaption></figure>
+<div class="box dica"><b>Dica</b><p>O número do TOP é guardado exatamente como você digitar, inclusive zeros no começo. Os campos “Nome da operação / pista” e “Responsável padrão e CRM”, mais abaixo no mesmo quadro, são opcionais.</p></div>
+<h3>Mudando para outro TOP</h3>
+<p>O botão <span class="k">Iniciar outro TOP</span> limpa a sessão para um novo evento. <b>Faça o backup antes</b> (capítulo 9). O aplicativo pede confirmação, mantém a base e os logos, e você precisa informar de novo o número e o local.</p>
+
+<h2 id="c4-2">Conta do triador (opcional)</h2>
+<p>Sem login, o aplicativo funciona normalmente, inclusive sem internet. Entrar na conta é <b>opcional</b>, mas necessário para usar as <b>Inscrições do formulário</b> e o <b>resumo por WhatsApp</b>. A conta é entregue a você pela coordenação.</p>
+<ol class="passos">
+  <li>Com internet, abra <span class="menu">Configurações</span> e o quadro <b>Conta do triador</b>.</li>
+  <li>Digite o e-mail e a senha. O ícone de olho mostra ou esconde a senha.</li>
+  <li>Marque a caixa “Entendi que será registrado apenas o uso do aplicativo...”. Sem marcar, o botão não funciona.</li>
+  <li>Clique em <span class="k go">Entrar</span>. O app avisa “Conta conectada” e já preenche o seu nome e o seu número de Legendário no cabeçalho.</li>
+</ol>
+<figure class="p85"><img src="img/03-conta-triador.jpg" alt="Quadro Conta do triador"><figcaption>Quadro Conta do triador, antes de entrar.</figcaption>
+<ol class="leg"><li>E-mail.</li><li>Senha, com o olho para mostrar.</li><li>Caixa de ciência. Obrigatória.</li><li>Entrar.</li></ol></figure>
+<div class="box importante"><b>O que muda quando você entra na conta</b>
+<ul><li>O aplicativo registra o <b>uso</b>: quando você entrou, as telas abertas, os resultados das triagens por cor e faixa, as importações e as exportações.</li>
+<li>Passam a funcionar as <b>Inscrições do formulário</b> e o botão <span class="k">Enviar resumo da triagem por WhatsApp</span>.</li>
+<li><b>A coordenação recebe avisos por WhatsApp</b> (veja o capítulo 10). Cada ficha <span class="chip vermelho">Vermelho</span> ou <span class="chip preto">Preto</span> que você salvar gera um aviso com <b>nome, idade, telefone, e-mail e motivos</b> do participante. Trate esses dados com sigilo.</li></ul></div>
+<h2 id="c4-3">Preferência de salvar arquivos</h2>
+<p>Ainda em <span class="menu">Configurações</span>, o quadro <b>Salvar arquivos · Google Drive e OneDrive</b> deixa você escolher o formato (.xlsx, .csv, .ods, .pdf ou .html) e o destino que prefere para os relatórios. Depois clique em <span class="k">Guardar preferência de salvamento</span>. Isso não envia nada: só guarda a sua escolha neste navegador.</p>
+
+<h1 id="c5"><span class="n">5</span> Trazendo os participantes</h1>
+<p>Há três caminhos. Você pode usar mais de um no mesmo evento.</p>
+<table>
+  <thead><tr><th style="width:26%">Caminho</th><th>Quando usar</th></tr></thead>
+  <tbody>
+    <tr><td><b>A. Novo participante</b></td><td>Para cadastrar uma pessoa digitando, ou quando o participante chega sem inscrição prévia.</td></tr>
+    <tr><td><b>B. Importar lista</b></td><td>Quando a coordenação entregou uma planilha ou arquivo com os inscritos.</td></tr>
+    <tr><td><b>C. Inscrições do formulário</b></td><td>Quando o participante preencheu sozinho o formulário do Google. Exige conta do triador e internet.</td></tr>
+  </tbody>
+</table>
+<h2 id="c5-1">A. Novo participante</h2>
+<p>Clique em <span class="k go">＋ Novo participante</span>. Abre a ficha em branco. O preenchimento está no capítulo 6.</p>
+
+<h2 id="c5-2">B. Importar lista</h2>
+<p>O aplicativo lê o arquivo <b>no próprio aparelho</b>. Nada é enviado pela internet. Aceita planilhas (Excel, ODS), CSV/TSV/TXT, HTML, XML, JSON, documentos DOCX/ODT, PDF e imagens comuns.</p>
+<ol class="passos">
+  <li>Na aba <span class="menu">Participantes</span>, clique em <span class="k">↥ Importar lista</span>.</li>
+  <li>Clique em <span class="k">Escolher arquivo</span> e selecione o arquivo. A caixa de OCR só serve para PDFs escaneados, sem texto: ela deixa a leitura mais lenta e vale até 10 páginas.</li>
+  <li>Aguarde a mensagem “Leitura concluída”. O aplicativo procura as tabelas sozinho (<span class="k">Detectar estruturas</span>). Se ele errar as colunas, use <span class="k">Mapear colunas manualmente</span>.</li>
+  <li>Em “estruturas detectadas”, deixe marcadas as tabelas que você quer importar.</li>
+  <li>Role a janela até a <b>prévia</b>. Leia os avisos e confira se nomes, idades e alturas estão certos.</li>
+  <li>Marque a caixa “Conferi os blocos e a prévia...” e clique em <span class="k go">Confirmar inclusão de N participantes</span>.</li>
+</ol>
+<figure class="p70"><img src="img/40-importar-1.jpg" alt="Janela de importação"><figcaption>Janela de importação, antes de escolher o arquivo.</figcaption>
+<ol class="leg"><li>Usar OCR (só para PDF sem texto).</li><li>Escolher o arquivo.</li></ol></figure>
+<figure class="p70"><img src="img/41-importar-2.jpg" alt="Leitura do arquivo"><figcaption>Depois de escolher o arquivo.</figcaption>
+<ol class="leg"><li>Detectar estruturas (automático).</li><li>Mapear colunas manualmente.</li></ol></figure>
+<figure class="p70"><img src="img/42-importar-3.jpg" alt="Prévia e confirmação"><figcaption>Prévia pronta. Nada foi incluído ainda.</figcaption>
+<ol class="leg"><li>Caixa de conferência. Obrigatória.</li><li>Confirmar inclusão.</li></ol></figure>
+<div class="box importante"><b>Como funciona a conferência</b>
+<ul><li>Enquanto você não clicar em “Confirmar inclusão”, <b>nenhum participante é incluído</b>.</li>
+<li>Importar não faz a triagem. As fichas entram com a avaliação clínica <b>pendente</b>: você ainda precisa abrir e revisar cada uma.</li>
+<li>O aplicativo confere o <b>formato</b> do CPF e do telefone, mas isso não prova que o CPF ou o telefone existem ou são da pessoa.</li>
+<li>Se algum dado preenchido estiver inválido (por exemplo, idade fora do permitido), a importação é <b>recusada por inteiro</b> e a mensagem diz o motivo. Corrija o arquivo e tente de novo.</li>
+<li>Campos vazios são ignorados e depois listados nos relatórios como “não informados”.</li>
+<li>Limite: 10 MiB por arquivo.</li></ul></div>
+
+<h2 id="c5-3">C. Inscrições do formulário do Google</h2>
+<p>A coordenação pode enviar aos participantes um <b>link de formulário</b> para eles mesmos preencherem a ficha de saúde. Cada resposta chega ao aplicativo e fica esperando você. Os dados são <b>autodeclarados</b>: você deve conferir cada ficha com o participante e com os documentos.</p>
+<ol class="passos">
+  <li>Entre na <b>conta do triador</b> (capítulo 4) e use o site, com internet. O arquivo offline não busca inscrições.</li>
+  <li>Na aba <span class="menu">Participantes</span>, clique em <span class="k">☁ Inscrições do formulário</span>.</li>
+  <li>A janela lista as inscrições novas. As válidas já vêm marcadas. As que <b>não podem ser importadas</b> aparecem desmarcadas, com o motivo (por exemplo, “Idade deve ser inteira entre 16 e 120 anos”). Quem já está na lista também vem desmarcado.</li>
+  <li>Marque as que quer incluir. Para rever inscrições antigas, marque “Mostrar também as inscrições já importadas”.</li>
+  <li>Marque a caixa “Conferi a lista e sei que os dados são autodeclarados...”.</li>
+  <li>Clique em <span class="k go">Importar selecionadas</span>.</li>
+</ol>
+<figure class="p70"><img src="img/71-formulario.jpg" alt="Janela das inscrições do formulário"><figcaption>Janela das inscrições do formulário (exemplo com dados inventados).</figcaption>
+<ol class="leg"><li>Uma inscrição válida, marcada.</li><li>Mostrar também as já importadas.</li><li>Caixa de conferência. Obrigatória.</li><li>Importar selecionadas.</li></ol></figure>
+<div class="box dica"><b>Link do formulário para os participantes</b><p class="peq">{{LINK_FORMULARIO}}</p><p>O formulário só coleta as respostas. Ele não classifica nem libera ninguém. A triagem é feita aqui, na ficha do aplicativo.</p></div>
+
+<h1 id="c6"><span class="n">6</span> Fazendo a triagem de um participante</h1>
+<p>É a parte principal do trabalho. Cada participante tem uma <b>ficha</b>. Você preenche, revisa e salva.</p>
+<h2 id="c6-1">Abrindo a ficha</h2>
+<ul>
+  <li><b>Participante novo:</b> clique em <span class="k go">＋ Novo participante</span>.</li>
+  <li><b>Participante que já está na lista:</b> procure o nome e clique em <span class="k">Abrir ficha</span> (capítulo 8).</li>
+</ul>
+<p>A ficha abre numa janela com um botão <b>✕</b> para fechar. Embaixo ficam sempre visíveis <span class="k">Imprimir / PDF</span> e <span class="k go">Salvar avaliação</span>. O aviso no topo repete: “Dados mantidos somente nesta sessão. Salve um backup protegido antes de fechar ou atualizar.” O <b>ID do participante</b> é gerado pelo aplicativo.</p>
+
+<h2 id="c6-2">Passo 1: dados e medidas</h2>
+<figure class="p70"><img src="img/10-ficha-identificacao.jpg" alt="Ficha: identificação"><figcaption>Começo da ficha: identificação e medidas.</figcaption>
+<ol class="leg"><li>Nome completo.</li><li>Telefone ou WhatsApp.</li><li>Idade.</li><li>Peso (kg).</li><li>Altura.</li></ol></figure>
+<table>
+  <thead><tr><th style="width:26%">Campo</th><th>Como preencher</th></tr></thead>
+  <tbody>
+    <tr><td><b>Nome completo</b></td><td>Como no documento. É permitido salvar sem nome, mas a ficha fica com a pendência “Completar identificação”.</td></tr>
+    <tr><td><b>Telefone / WhatsApp</b></td><td>Com DDD. Pode ser usado na busca da lista.</td></tr>
+    <tr><td><b>Idade</b></td><td>Número <b>inteiro</b>, de <b>16 a 120</b>. Menos de 16 não é aceito.</td></tr>
+    <tr><td><b>Peso (kg)</b></td><td>De 20 a 350. Exemplo: 82,5.</td></tr>
+    <tr><td><b>Altura (cm ou m)</b></td><td>Pode digitar 175 ou 1,75. Valores entre 100 e 250 cm.</td></tr>
+    <tr><td><b>Estado que reside, Grupo sanguíneo, Dieta especial</b></td><td>Texto curto. Exemplo: SP, O+.</td></tr>
+    <tr><td><b>Condição física informada, Atestado informado</b></td><td>O que o participante ou o documento disse. Texto livre.</td></tr>
+    <tr><td><b>CPF, E-mail, Contato de emergência</b></td><td>Na digitação manual o aplicativo <b>não confere</b> o CPF nem o telefone. Confira você com o documento.</td></tr>
+    <tr><td><b>Condição médica, Medicamentos em uso, Alergias, Doença ou condição, Problemas de saúde, Informação médica importante, Observações</b></td><td>Caixas de texto livre para registrar o que for dito. <b>O aplicativo não interpreta esse texto.</b> Veja o aviso abaixo.</td></tr>
+  </tbody>
+</table>
+<div class="box atencao"><b>Texto livre não vira critério</b><p>Se o participante disser que usa remédio para pressão e você só escrever isso em “Medicamentos em uso”, <b>os pontos e a cor não mudam</b>. É preciso marcar o critério correspondente na lista de critérios (Passo 2).</p></div>
+<figure class="p70"><img src="img/10b-ficha-sinais.jpg" alt="Ficha: sinais vitais"><figcaption>Sinais vitais e observações.</figcaption>
+<ol class="leg"><li>Pressão arterial.</li><li>Frequência cardíaca.</li><li>SpO₂ (saturação de oxigênio).</li><li>Observações.</li></ol></figure>
+<div class="box importante"><b>Sinais vitais</b><p>Pressão arterial, frequência cardíaca e SpO₂ ficam <b>registradas</b> na ficha e nos relatórios, mas <b>não entram</b> na soma de pontos nem na cor. Elas servem de registro para o profissional.</p></div>
+
+<h2 id="c6-3">Passo 2: marcar os critérios</h2>
+<p>Mais abaixo na ficha ficam cinco blocos de critérios: <b>Histórico médico</b>, <b>Medicamentos — fatores do manual</b>, <b>Sintomas atuais</b>, <b>Critérios de exclusão</b> e <b>Fatores adicionais</b>. Cada critério é uma caixinha. Os que somam pontos mostram o valor ao lado (por exemplo, <b>+2</b>).</p>
+<ol class="passos">
+  <li>Pergunte ao participante, bloco por bloco, e confira os documentos.</li>
+  <li><b>Marque somente as caixinhas confirmadas.</b> Se a resposta for “não tenho”, deixe sem marcar.</li>
+  <li>Quando terminar um bloco, marque “Seção revisada com o participante / documentos”. Isso diz ao aplicativo que o bloco foi conferido de verdade.</li>
+</ol>
+<figure class="p70"><img src="img/11-ficha-historico.jpg" alt="Ficha: histórico médico"><figcaption>Bloco Histórico médico (e começo de Medicamentos).</figcaption>
+<ol class="leg"><li>Um critério marcado (Hipertensão, +2).</li><li>Seção revisada com o participante / documentos.</li></ol></figure>
+<figure class="p70"><img src="img/12-ficha-exclusoes.jpg" alt="Ficha: critérios de exclusão"><figcaption>Blocos Critérios de exclusão e Fatores adicionais.</figcaption>
+<ol class="leg"><li>Um critério de exclusão (aqui, “Grande cirurgia nos últimos 3 meses”).</li><li>Seção revisada.</li></ol></figure>
+<div class="box atencao"><b>Só marque “Seção revisada” depois de conferir</b><p>Sem a marca de revisão, o bloco continua como pendência e a avaliação fica “Parcial”. Marcar a revisão sem ter perguntado engana a equipe.</p></div>
+<div class="box importante"><b>Sobre o Implante</b><p>O critério “Implante — critério de cor pendente” ainda não tem uma regra definida pelo responsável. Quando for marcado, a ficha mostra a pendência “Resolver divergência de critério para implante”. O aplicativo <b>não decide</b> a cor. Leve o caso ao médico responsável.</p></div>
+
+<h2 id="c6-4">Passo 3: preparação e revisão</h2>
+<figure class="p70"><img src="img/13-ficha-preparo.jpg" alt="Ficha: preparação e revisão"><figcaption>Bloco Preparação e revisão, no fim da ficha.</figcaption>
+<ol class="leg"><li>Atividade física.</li><li>Caminha 10 km sem fadiga excessiva?</li><li>Vacina antitetânica vigente?</li><li>Já fez caminhadas longas?</li><li>Responsável e CRM.</li><li>Atestado e exames obrigatórios conferidos.</li></ol></figure>
+<ul>
+  <li><b>As quatro perguntas de preparo</b> (listas de escolha): se não souber, deixe “Não informado”. Elas também somam pontos.</li>
+  <li><b>Responsável e CRM:</b> nome e registro de quem fez a revisão. Sem isso, a ficha continua pendente.</li>
+  <li><b>Atestado e exames obrigatórios conferidos:</b> marque somente depois de ver o atestado e os exames.</li>
+</ul>
+<div class="box regra"><b>Regra do atestado (Manual de Alinhamento Estratégico 2026)</b><p>Todos precisam de atestado de médico cardiologista. Menos de 40 anos: eletrocardiograma. 40 anos ou mais: teste ergométrico. O atestado vale 1 ano. Ninguém participa sem o atestado válido no check-in. Em caso de dúvida, vale o manual vigente.</p></div>
+
+<h2 id="c6-5">Passo 4: ler o resultado</h2>
+<p>O resultado aparece no fim da ficha e se atualiza <b>sozinho</b> a cada marca que você faz. Veja o que cada linha quer dizer.</p>
+<figure class="p70"><img src="img/14-ficha-resultado.jpg" alt="Ficha: resultado"><figcaption>Resultado de uma ficha ainda incompleta.</figcaption>
+<ol class="leg"><li>Faixa interna. Aqui “Parcial — faixa final não calculável”.</li><li>Score (pontos) e IMC.</li><li>Atenção operacional provisória: a cor.</li><li>Pendências: o que falta fazer.</li><li>Imprimir / PDF.</li><li>Salvar avaliação.</li></ol></figure>
+<table>
+  <thead><tr><th style="width:28%">Linha</th><th>O que significa</th></tr></thead>
+  <tbody>
+    <tr><td><b>Faixa interna</b></td><td>Baixa, Moderada, Alta ou Muito alta, pelos pontos (capítulo 7). Só aparece quando a avaliação está <b>completa</b>. Enquanto faltar algo, aparece <b>“Parcial — faixa final não calculável”</b>.</td></tr>
+    <tr><td><b>Score interno</b></td><td>A soma dos pontos dos critérios marcados.</td></tr>
+    <tr><td><b>IMC adulto</b></td><td>Calculado com peso e altura. Para menores de 18 anos não é calculado.</td></tr>
+    <tr><td><b>Atenção operacional provisória</b></td><td>A cor: Verde, Amarelo, Vermelho ou Preto. Logo abaixo, o aplicativo lista <b>os motivos</b> da cor.</td></tr>
+    <tr><td><b>Critérios de exclusão — revisão obrigatória</b></td><td>Texto em vermelho. Aparece quando algum critério de exclusão foi marcado. “Exclusões prevalecem sobre a soma; a decisão exige avaliação profissional.”</td></tr>
+    <tr><td><b>Pendências</b></td><td>Lista do que ainda falta. Uma ficha <b>só fica completa</b> quando as pendências somem: revisar os cinco blocos, nome, idade, peso, altura, as quatro perguntas de preparo, conferir o atestado e registrar o responsável e o CRM.</td></tr>
+  </tbody>
+</table>
+
+<h2 id="c6-6">Passo 5: salvar</h2>
+<ol class="passos">
+  <li>Clique em <span class="k go">Salvar avaliação</span>. A janela fecha e aparece o aviso “Avaliação salva na sessão. Lembre-se do backup.”</li>
+  <li>A ficha passa a aparecer na lista, com a cor e o estado.</li>
+  <li>Se você fechar a janela com o ✕ <b>sem salvar</b>, o que digitou se perde.</li>
+</ol>
+<p>O botão <span class="k">Imprimir / PDF</span>, dentro da ficha, imprime ou salva em PDF o que está aberto <b>agora</b>, inclusive o que ainda não foi salvo.</p>
+<div class="box atencao"><b>Salvar a ficha não é salvar o arquivo</b><p>“Salvar avaliação” guarda na memória da aba. Para guardar em arquivo, faça o <b>backup</b> (capítulo 9).</p></div>
+<h3>Se o aplicativo recusar um dado</h3>
+<p>Quando um número está fora do permitido, a ficha não fecha e aparece uma mensagem em vermelho. Corrija o campo e salve de novo.</p>
+<figure class="p55"><img src="img/15-erro-validacao.jpg" alt="Mensagem de erro"><figcaption>Mensagem de erro ao salvar uma idade menor que 16.</figcaption>
+<ol class="leg"><li>A mensagem diz o que corrigir.</li></ol></figure>
+<table>
+  <thead><tr><th style="width:34%">Mensagem</th><th>O que fazer</th></tr></thead>
+  <tbody>
+    <tr><td>Idade deve ser inteira entre 16 e 120 anos.</td><td>Digite só números inteiros. O aplicativo não aceita menores de 16 anos.</td></tr>
+    <tr><td>Peso deve estar entre 20 e 350 kg.</td><td>Confira se digitou em quilos.</td></tr>
+    <tr><td>Altura deve estar entre 100 e 250 cm.</td><td>Digite 175 ou 1,75.</td></tr>
+  </tbody>
+</table>
+
+<h1 id="c7"><span class="n">7</span> Entendendo as cores, a faixa e as exclusões</h1>
+<p>O aplicativo usa regras fixas, que estão todas na aba <span class="menu">Critérios e fontes</span> e no <b>Apêndice A</b> deste manual. Você não precisa decorar: o aplicativo mostra o motivo de cada cor.</p>
+<h2 id="c7-1">As quatro cores</h2>
+<table>
+  <thead><tr><th style="width:15%">Cor</th><th style="width:26%">Significa</th><th>O que faz a ficha ficar com essa cor</th></tr></thead>
+  <tbody>
+    <tr><td><span class="chip verde">Verde</span></td><td>Nenhum fator de cor foi marcado.</td><td>Nada marcado que dê cor. <b>Não é liberação.</b></td></tr>
+    <tr><td><span class="chip amarelo">Amarelo</span></td><td>Atenção.</td><td>Uso de medicamento para pressão, diabetes, colesterol, corticoide, anticoagulante, antidepressivo ou ansiolítico, inalador para asma; <b>IMC acima de 30</b>.</td></tr>
+    <tr><td><span class="chip vermelho">Vermelho</span></td><td>Atenção maior.</td><td>Hipertensão, problemas cardíacos, diabetes tipo 1 ou 2, “outra doença informada”, limitação cirúrgica, <b>idade acima de 60</b>, <b>idade de 16 ou 17 anos</b>.</td></tr>
+    <tr><td><span class="chip preto">Preto</span></td><td>Atenção máxima.</td><td>História de convulsão; <b>idade acima de 60 junto com</b> outra doença, hipertensão, problema cardíaco ou diabetes.</td></tr>
+  </tbody>
+</table>
+<div class="box regra"><b>Quando há mais de um motivo</b><p>Vale a cor mais grave, na ordem <span class="chip preto">Preto</span> › <span class="chip vermelho">Vermelho</span> › <span class="chip amarelo">Amarelo</span> › <span class="chip verde">Verde</span>. Exemplo: hipertensão (Vermelho) mais remédio para pressão (Amarelo) resulta em Vermelho.</p></div>
+<p>Veja como cada cor aparece no resultado da ficha. A linha <b>Atenção operacional provisória</b> mostra a cor e, logo abaixo, o aplicativo lista os motivos.</p>
+<figure class="p85"><img src="img/20-caso-verde.jpg" alt="Caso Verde"><figcaption>Nenhum fator marcado: Verde, faixa Baixa.</figcaption><ol class="leg"><li>A cor da ficha e, logo abaixo, os motivos.</li></ol></figure>
+<figure class="p85"><img src="img/26-caso-amarelo.jpg" alt="Caso Amarelo"><figcaption>IMC acima de 30: Amarelo, com o motivo “IMC &gt; 30”.</figcaption><ol class="leg"><li>A cor da ficha e, logo abaixo, os motivos.</li></ol></figure>
+<figure class="p85"><img src="img/21-caso-vermelho.jpg" alt="Caso Vermelho"><figcaption>Hipertensão e remédio para pressão: Vermelho.</figcaption><ol class="leg"><li>A cor da ficha e, logo abaixo, os motivos.</li></ol></figure>
+<figure class="p85"><img src="img/22-caso-preto.jpg" alt="Caso Preto"><figcaption>63 anos e outra doença informada: Preto.</figcaption><ol class="leg"><li>A cor da ficha e, logo abaixo, os motivos.</li></ol></figure>
+
+<h2 id="c7-2">A faixa de pontos</h2>
+<table>
+  <thead><tr><th style="width:30%">Faixa interna</th><th>Pontos</th></tr></thead>
+  <tbody><tr><td><b>Baixa</b></td><td>0 a 7</td></tr><tr><td><b>Moderada</b></td><td>8 a 15</td></tr><tr><td><b>Alta</b></td><td>16 a 25</td></tr><tr><td><b>Muito alta</b></td><td>26 ou mais</td></tr></tbody>
+</table>
+<p>A faixa só aparece com a avaliação <b>completa</b>. A pontuação vem das caixinhas marcadas (os valores +1, +2, +3, +4) e das quatro perguntas de preparo.</p>
+<div class="box importante"><b>Cor e faixa são coisas diferentes</b><p>Uma pessoa pode estar na faixa <b>Baixa</b> e ser <span class="chip vermelho">Vermelho</span> (exemplo: hipertensão com poucos pontos). Olhe sempre a cor e os motivos, não só a faixa.</p></div>
+
+<h2 id="c7-3">Critérios de exclusão</h2>
+<p>Alguns critérios, quando marcados, fazem a ficha exibir, em vermelho, <b>“Critérios de exclusão — revisão obrigatória”</b>. Pela tabela do aplicativo, são:</p>
+<ul>
+  <li>Grande cirurgia nos últimos 3 meses; dor no peito ao mínimo esforço; síncope (desmaio) recente;</li>
+  <li>doença cardíaca não controlada; diabetes tipo 1 sem controle estrito; asma severa mal controlada;</li>
+  <li>alergia grave (anafilaxia) sem autoinjetor; problema psiquiátrico grave;</li>
+  <li><b>IMC acima de 40</b>; <b>anticoagulantes</b>; <b>febre ou doença aguda</b>; e responder <b>“Não”</b> à pergunta “Caminha 10 km sem fadiga excessiva?”.</li>
+</ul>
+<figure class="p85"><img src="img/23-caso-exclusao.jpg" alt="Caso com critério de exclusão"><figcaption>Cirurgia recente: a cor aparece Verde, mas há critério de exclusão.</figcaption>
+<ol class="leg"><li>A cor mostrada (Verde, pois nenhum fator de cor foi marcado).</li><li>O aviso de exclusão, em vermelho.</li></ol></figure>
+<div class="box atencao"><b>Verde com exclusão: não confie só na cor</b><p>A exclusão <b>não muda a cor</b>. Na ficha acima a cor está Verde e, mesmo assim, o aplicativo exige revisão obrigatória. Na <b>lista de participantes</b>, a coluna mostra apenas a cor, e a exclusão <b>não aparece ali</b>. O sinal de exclusão está na ficha e no cartão <b>“Atenção prioritária”</b>. Por isso, <b>abra a ficha antes de qualquer conclusão</b>, e use o filtro “Atenção prioritária” (capítulo 8) para ver todos os casos de exclusão.</p></div>
+
+<h2 id="c7-4">Casos especiais</h2>
+<figure class="p85"><img src="img/24-caso-menor.jpg" alt="Participante de 17 anos"><figcaption>17 anos: sempre Vermelho, sem IMC e sem faixa de adulto.</figcaption><ol class="leg"><li>A cor Vermelho, com a mensagem de revisão específica.</li><li>A pendência que não some.</li></ol></figure>
+<figure class="p85"><img src="img/25-caso-implante.jpg" alt="Caso com implante"><figcaption>Implante marcado: a ficha fica pendente, sem decisão automática de cor.</figcaption><ol class="leg"><li>A cor mostrada (sem fator assinalado).</li><li>A pendência “Resolver divergência de critério para implante”.</li></ol></figure>
+<ul>
+  <li><b>16 e 17 anos:</b> o aplicativo mostra Vermelho e a mensagem “revisão específica obrigatória”. Não calcula IMC nem faixa de adulto. A pendência “Menor de 18: avaliação específica” não some.</li>
+  <li><b>Menos de 16 anos:</b> o aplicativo não aceita o cadastro.</li>
+  <li><b>Implante:</b> ver o capítulo 6. A pendência não some até o responsável definir.</li>
+  <li><b>Preto:</b> só aparece com um critério preto explícito (convulsão, ou idade acima de 60 junto com doença). O aplicativo nunca “promove” alguém a Preto por palpite.</li>
+</ul>
+<div class="box regra"><b>O que fazer com Vermelho, Preto e exclusão</b><p>O aplicativo não manda “liberar” nem “barrar” ninguém. Para esses casos: <b>(1)</b> confirme os dados com o participante e com os documentos; <b>(2)</b> leve a ficha ao <b>médico responsável</b>; <b>(3)</b> registre o nome do responsável e o CRM na ficha. A decisão é do profissional.</p></div>
+
+<h1 id="c8"><span class="n">8</span> Acompanhando o grupo</h1>
+<h2 id="c8-1">A Lista de localização</h2>
+<p>Na aba <span class="menu">Participantes</span>, abaixo dos cartões, fica a lista com todos os participantes. Cada linha mostra o nome, o ID, a idade, o IMC, a cor, o estado da avaliação e o botão <span class="k">Abrir ficha</span>.</p>
+<figure class="p85"><img src="img/30-lista.jpg" alt="Lista de localização"><figcaption>Lista de localização com seis participantes de exemplo.</figcaption>
+<ol class="leg"><li>Buscar por nome, CPF, telefone ou ID.</li><li>Filtro de avaliação.</li><li>Filtro de cor.</li><li>Ordenação.</li><li>Limpar filtros.</li><li>Abrir ficha.</li></ol></figure>
+<table>
+  <thead><tr><th style="width:27%">Controle</th><th>Como usar</th></tr></thead>
+  <tbody>
+    <tr><td><b>Buscar</b></td><td>Digite parte do nome (com ou sem acento), do CPF, do telefone ou do ID.</td></tr>
+    <tr><td><b>Todas as avaliações</b></td><td>Escolha entre <b>Pendentes</b>, <b>Revisões completas</b> e <b>Atenção prioritária</b>.</td></tr>
+    <tr><td><b>Todas as cores</b></td><td>Escolha Verde, Amarelo, Vermelho ou Preto.</td></tr>
+    <tr><td><b>Ordenar</b></td><td>“por nome (A–Z)” ou “por cor e nome” (Preto primeiro, depois Vermelho, Amarelo e Verde).</td></tr>
+    <tr><td><b>Limpar filtros</b></td><td>Volta à lista inteira.</td></tr>
+    <tr><td><b>← →</b></td><td>Trocam de página, no pé da lista.</td></tr>
+  </tbody>
+</table>
+<p>Você pode combinar a busca, a cor e o estado ao mesmo tempo. A frase acima da lista mostra quantos participantes estão sendo exibidos (“2 de 6”).</p>
+<figure class="p85"><img src="img/31-lista-vermelho.jpg" alt="Lista filtrada por Vermelho"><figcaption>A mesma lista com o filtro de cor em “Vermelho”.</figcaption>
+<ol class="leg"><li>Filtro de cor.</li></ol></figure>
+<h3>Lendo a coluna “Avaliação”</h3>
+<ul>
+  <li><b>Revisão pendente · Parcial · N pontos:</b> a ficha ainda não está completa.</li>
+  <li><b>Revisão completa · Faixa interna: Baixa (ou outra):</b> todas as pendências foram resolvidas.</li>
+</ul>
+<div class="box atencao"><b>Verde na lista não é liberação</b><p>O texto acima da lista lembra: “Verde significa sem fator de cor assinalado; avaliações parciais continuam pendentes.” E uma pessoa com <b>critério de exclusão</b> pode aparecer Verde na lista. Veja o capítulo 7.</p></div>
+<div class="box importante"><b>Os filtros não limitam os relatórios</b><p>Os filtros mudam só o que você vê na tela. Os relatórios sempre incluem a sessão inteira.</p></div>
+
+<h2 id="c8-2">Calculadoras</h2>
+<p>Na aba <span class="menu">Calculadoras</span> há duas ferramentas independentes. Elas <b>não alteram a ficha</b>.</p>
+<figure class="p85"><img src="img/50-calculadoras.jpg" alt="Calculadora de IMC"><figcaption>Calculadora de IMC com resultado.</figcaption>
+<ol class="leg"><li>Idade em anos.</li><li>Peso em kg.</li><li>Altura em cm ou m.</li><li>Calcular.</li></ol></figure>
+<ul>
+  <li><b>IMC:</b> preencha idade, peso e altura e clique em <span class="k">Calcular</span>. Para menores de idade o resultado é só o número, sem classificação de adulto.</li>
+  <li><b>TFGe (CKD-EPI 2021):</b> escolha a ferramenta no menu “Ferramenta”, informe idade, creatinina (mg/dL) e o sexo usado na equação. Vale para adultos. A estimativa isolada não diagnostica doença renal.</li>
+</ul>
+
+<h2 id="c8-3">Critérios e fontes</h2>
+<p>A aba <span class="menu">Critérios e fontes</span> mostra todas as regras em tabelas: o nome de cada critério, os pontos, a cor que ele dá, se ele exclui e se está ativo. Também mostra a fonte das regras (Manual Hakunas) e as faixas. Use-a quando tiver dúvida sobre <b>por que</b> uma ficha ficou de uma cor.</p>
+<div class="box atencao"><b>Não altere os critérios</b><p>Os botões <span class="k">Editar critérios / adicionar</span> e <span class="k">Aplicar versão ativa às fichas existentes</span> mudam a regra de todas as fichas. Isso só deve ser feito pelo <b>responsável pelo protocolo</b>, com autorização. Se você não tem certeza, não clique.</p></div>
+
+<h1 id="c9"><span class="n">9</span> Guardando, imprimindo e encerrando</h1>
+<h2 id="c9-1">Backup protegido (.LGND)</h2>
+<p>O backup guarda <b>todas as fichas e configurações</b> em um arquivo protegido por senha, com a extensão <span class="mono">.LGND</span>. É a <b>única</b> forma de recuperar a sessão se a página for fechada, atualizada ou o aparelho falhar.</p>
+<ol class="passos">
+  <li>Na aba <span class="menu">Participantes</span>, clique em <span class="k">↓ Salvar backup</span>. (Também existe em <span class="menu">Arquivos e segurança</span>, no botão <span class="k">↓ Salvar arquivo protegido</span>.)</li>
+  <li>Crie uma <b>senha com no mínimo 10 caracteres</b> e digite de novo em “Confirme a senha”. O ícone de olho mostra a senha.</li>
+  <li>Clique em <span class="k go">Salvar arquivo .LGND</span> e escolha onde guardar o arquivo.</li>
+</ol>
+<figure class="p80"><img src="img/63-backup.jpg" alt="Janela de backup"><figcaption>Janela Salvar backup protegido.</figcaption>
+<ol class="leg"><li>Senha (mínimo de 10 caracteres).</li><li>Confirme a senha.</li><li>Salvar arquivo .LGND.</li></ol></figure>
+<div class="box atencao"><b>Sem recuperação de senha</b><p>“A senha não é armazenada e não pode ser recuperada.” Se você perder a senha, o backup <b>não abre mais</b>. Anote a senha em lugar seguro e <b>separado</b> do arquivo.</p></div>
+<div class="box dica"><b>Quando fazer backup (sugestão)</b><p>A cada intervalo ou pausa, depois de salvar um lote de fichas, antes de trocar de aparelho e no fim do dia. Use um nome que mostre o TOP e o horário. Esta frequência é uma sugestão deste manual, não uma regra do aplicativo.</p></div>
+
+<h2 id="c9-2">Restaurar um backup</h2>
+<ol class="passos">
+  <li>Abra <span class="menu">Arquivos e segurança</span> e clique em <span class="k">↥ Restaurar backup</span>.</li>
+  <li>Escolha o arquivo <span class="mono">.LGND</span> e digite a senha.</li>
+  <li>Clique em <span class="k go">Validar e restaurar</span> e confirme.</li>
+</ol>
+<div class="box importante"><b>Restaurar substitui a sessão atual</b><p>O aplicativo só troca a sessão depois de validar o arquivo e de você confirmar. Se houver fichas na tela que ainda não estão em backup, salve um backup novo antes.</p></div>
+<figure class="p85"><img src="img/60-arquivos.jpg" alt="Aba Arquivos e segurança"><figcaption>Aba Arquivos e segurança.</figcaption>
+<ol class="leg"><li>Salvar arquivo protegido (backup).</li><li>Restaurar backup.</li><li>Apagar participantes da sessão.</li></ol></figure>
+
+<h2 id="c9-3">Relatórios e impressão</h2>
+<p>Há duas formas de chegar à mesma janela de relatórios: o botão <span class="k">Imprimir</span> ou <span class="k">Exportar</span> na barra de cima, e o botão <span class="k">Salvar relatórios</span> na lista. O botão <span class="k">Salvar CSV</span> guarda os dados em um arquivo CSV (legível e sem senha).</p>
+<figure class="p55"><img src="img/64-relatorios.jpg" alt="Janela de relatórios"><figcaption>Janela Salvar ou imprimir relatórios.</figcaption>
+<ol class="leg"><li>Imprimir relatório completo.</li><li>Abrir prévia para conferir e imprimir.</li><li>Extensão do arquivo.</li><li>Onde salvar.</li><li>Caixa de ciência: arquivo legível com dados pessoais.</li><li>Salvar relatório completo.</li><li>Salvar dados faltantes.</li></ol></figure>
+<h3>Imprimir</h3>
+<ol class="passos">
+  <li>Clique em <span class="k">Abrir prévia para conferir e imprimir</span>. O relatório abre em outra aba, com o botão de imprimir ou salvar em PDF.</li>
+  <li>Se o navegador não abrir a impressão, use a prévia, ou escolha PDF em “Extensão do arquivo” e salve.</li>
+</ol>
+<h3>Salvar em arquivo</h3>
+<ol class="passos">
+  <li>Escolha a <b>extensão</b>: .xlsx, .csv, .ods, .pdf ou .html.</li>
+  <li>Escolha <b>onde salvar</b>: escolher pasta e nome, baixar pelo navegador, compartilhar pelo sistema (Google Drive ou OneDrive pelo aparelho).</li>
+  <li>Marque a caixa “Entendo que estes arquivos contêm dados pessoais/de saúde legíveis...”.</li>
+  <li>Clique em <span class="k go">Salvar relatório completo</span> e, se quiser, em <span class="k">Salvar dados faltantes</span>.</li>
+</ol>
+<ul>
+  <li>O <b>relatório completo</b> traz a sessão inteira: todos os participantes, a identificação do TOP, a versão dos critérios usada em cada ficha e a indicação do que está faltando.</li>
+  <li>O arquivo de <b>dados faltantes</b> lista, para cada pessoa, os campos que ficaram em branco. É um alerta: não impede salvar nem imprimir.</li>
+  <li><b>Salve as fichas antes.</b> O que está aberto na ficha e ainda não foi salvo não entra no relatório.</li>
+  <li>O aplicativo não conecta contas do Google ou da Microsoft e não confirma o envio. Confira no próprio Drive ou OneDrive.</li>
+</ul>
+<div class="box atencao"><b>Relatórios são legíveis por qualquer pessoa</b><p>Diferente do backup .LGND, os relatórios <b>não têm senha</b> e contêm dados de saúde. Guarde em local adequado e não envie em grupos.</p></div>
+
+<h2 id="c9-4">Fim do dia: lista de verificação</h2>
+<table>
+  <thead><tr><th style="width:8%">✓</th><th>Antes de fechar o aplicativo</th></tr></thead>
+  <tbody>
+    <tr><td>☐</td><td>Todas as fichas foram salvas (nenhuma janela de ficha aberta).</td></tr>
+    <tr><td>☐</td><td>Casos Vermelho, Preto e com exclusão foram levados ao médico responsável.</td></tr>
+    <tr><td>☐</td><td>O <b>backup .LGND</b> foi salvo, e a senha anotada em lugar separado.</td></tr>
+    <tr><td>☐</td><td>O <b>relatório completo</b> foi salvo (e os dados faltantes, se necessário).</td></tr>
+    <tr><td>☐</td><td>Os arquivos estão em local seguro (pasta definida pela coordenação).</td></tr>
+    <tr><td>☐</td><td>Só então: se for o caso, <span class="k">Apagar participantes da sessão</span> ou <span class="k">Iniciar outro TOP</span>.</td></tr>
+  </tbody>
+</table>
+<div class="box atencao"><b>Apagar participantes da sessão</b><p>Esse botão (em <span class="menu">Arquivos e segurança</span>) pergunta: “Apagar todos os participantes desta sessão? Esta ação não pode ser desfeita.” Só confirme com o backup já guardado.</p></div>
+
+<h1 id="c10"><span class="n">10</span> Resumo e avisos por WhatsApp</h1>
+<p>Quando você está com a <b>conta do triador conectada</b>, o aplicativo avisa a coordenação por WhatsApp. Os números que recebem são cadastrados pelo administrador. O que é enviado:</p>
+<table>
+  <thead><tr><th style="width:32%">Quando</th><th>O que a coordenação recebe</th></tr></thead>
+  <tbody>
+    <tr><td>Ao entrar no aplicativo e ao iniciar a triagem (importar)</td><td>Aviso de quem está triando.</td></tr>
+    <tr><td>Ao salvar uma ficha <span class="chip vermelho">Vermelho</span> ou <span class="chip preto">Preto</span></td><td>Alerta individual: nome, idade, motivos, telefone e e-mail.</td></tr>
+    <tr><td>Depois de importar e ao gerar relatório</td><td>Resumo: totais por cor e, caso a caso, os Pretos e os Vermelhos, com os mesmos dados. Não repete se nada mudou.</td></tr>
+  </tbody>
+</table>
+<p>Todas as mensagens dizem que o caso <b>“requer avaliação humana (não é diagnóstico)”</b>. A cor e os motivos vêm do mesmo cálculo da ficha. Nenhuma inteligência artificial interpreta os dados.</p>
+<figure class="p85"><img src="img/70-conta-conectada.jpg" alt="Conta conectada"><figcaption>Quadro Conta do triador, depois de entrar.</figcaption>
+<ol class="leg"><li>Enviar resumo da triagem por WhatsApp, manualmente.</li><li>Sair da conta.</li></ol></figure>
+<ul>
+  <li>Para pedir o resumo agora, clique em <span class="k go">Enviar resumo da triagem por WhatsApp</span> e leia a mensagem que o aplicativo mostra.</li>
+  <li>Se um aviso de risco não for enviado, o aplicativo mostra na tela “WhatsApp não enviado” e o motivo. A triagem continua normalmente.</li>
+  <li>Ao terminar o seu turno, clique em <span class="k">Sair da conta</span>, principalmente em aparelho compartilhado.</li>
+</ul>
+
+<h1 id="c11"><span class="n">11</span> Usando no celular</h1>
+<p>O aplicativo se adapta à tela do celular: o menu passa para a <b>parte de baixo</b>, os botões ficam em coluna e a ficha ocupa quase toda a tela.</p>
+<div class="duo">
+<figure><img src="img/m1-inicio.jpg" alt="Tela inicial no celular"><figcaption>Início no celular: botões em coluna e menu embaixo.</figcaption></figure>
+<figure><img src="img/m2-lista.jpg" alt="Lista no celular"><figcaption>Lista de participantes no celular.</figcaption></figure>
+</div>
+<div class="duo">
+<figure><img src="img/m3-ficha.jpg" alt="Ficha no celular"><figcaption>Ficha no celular: role a janela para ver todos os campos.</figcaption></figure>
+<figure><img src="img/m4-resultado.jpg" alt="Resultado no celular"><figcaption>Resultado no fim da ficha, com as pendências.</figcaption></figure>
+</div>
+<ul>
+  <li>Abra o aplicativo <b>pelo navegador</b> (Chrome ou Safari). Evite abrir o arquivo HTML dentro do WhatsApp ou do Drive.</li>
+  <li>Teste antes, em modo avião, com dados inventados, como o capítulo 2 recomenda.</li>
+  <li>Faça o backup com mais frequência no celular: uma ligação, uma troca de aplicativo ou o celular recarregando a página podem fechar a aba.</li>
+  <li>Para guardar um relatório no Drive pelo celular, escolha, em “Onde salvar”, <b>Google Drive — pelo aparelho</b> e depois escolha a conta e a pasta na tela do sistema.</li>
+</ul>
+<div class="box importante"><b>O que não funciona sem internet</b><p>Entrar na conta do triador, as Inscrições do formulário e os avisos por WhatsApp precisam de internet. A triagem em si (fichas, cores, backup, relatórios) funciona sem internet.</p></div>
+
+<h1 id="c12"><span class="n">12</span> Quando algo não sai como esperado</h1>
+<table>
+  <thead><tr><th style="width:32%">O que aconteceu</th><th>O que fazer</th></tr></thead>
+  <tbody>
+    <tr><td>A tela está <b>branca</b> ao abrir o arquivo.</td><td>Você abriu numa prévia. Abra o arquivo pelo navegador, ou use o site.</td></tr>
+    <tr><td>Fechei a aba ou atualizei a página e <b>sumiram os participantes</b>.</td><td>Abra o aplicativo, vá em <span class="menu">Arquivos e segurança</span> e restaure o último backup .LGND. Sem backup, os dados não podem ser recuperados.</td></tr>
+    <tr><td>Esqueci a <b>senha do backup</b>.</td><td>Não há recuperação. Por isso anote a senha em lugar separado do arquivo.</td></tr>
+    <tr><td>O botão <b>Entrar</b> não faz nada.</td><td>Marque a caixa de ciência. Confira e-mail e senha, e se há internet.</td></tr>
+    <tr><td><b>Inscrições do formulário</b> pede para entrar.</td><td>Entre na conta do triador em <span class="menu">Configurações</span>. Funciona só no site, com internet.</td></tr>
+    <tr><td>A <b>importação foi recusada</b>.</td><td>Leia a mensagem. Em geral há um dado preenchido inválido, como idade fora de 16 a 120. Corrija o arquivo. O limite é 10 MiB por arquivo.</td></tr>
+    <tr><td>O aplicativo avisa sobre <b>CPF ou telefone</b>.</td><td>Ele só confere o formato. Confira com o documento do participante.</td></tr>
+    <tr><td>A <b>ficha não fecha</b> ao salvar.</td><td>Há uma mensagem em vermelho. Corrija o campo indicado (idade, peso ou altura).</td></tr>
+    <tr><td>A <b>impressão não abre</b>.</td><td>Use “Abrir prévia para conferir e imprimir”, ou salve em PDF e imprima pelo leitor de PDF.</td></tr>
+    <tr><td>A ficha continua <b>“Parcial”</b>.</td><td>Abra a ficha e leia a lista de <b>Pendências</b>. Resolva cada item.</td></tr>
+    <tr><td>Marquei um critério, mas a <b>cor não mudou</b>.</td><td>Confira se marcou a caixinha correta (e não só escreveu no texto livre). Veja os motivos listados na ficha.</td></tr>
+  </tbody>
+</table>
+<p>Se o problema continuar, <b>pare de usar o aparelho para novas fichas</b>, faça o backup se for possível e fale com a coordenação do evento.</p>
+
+<h1 id="c13"><span class="n">13</span> Glossário</h1>
+<table>
+  <thead><tr><th style="width:30%">Termo</th><th>Significado</th></tr></thead>
+  <tbody>
+    <tr><td><b>Ficha</b></td><td>O cadastro e a avaliação de um participante.</td></tr>
+    <tr><td><b>Sessão</b></td><td>Todos os participantes e configurações que estão abertos agora na aba do navegador.</td></tr>
+    <tr><td><b>Score interno</b></td><td>Soma de pontos dos critérios marcados. É uma regra operacional interna, não um diagnóstico.</td></tr>
+    <tr><td><b>Faixa interna</b></td><td>Baixa, Moderada, Alta ou Muito alta, definida pelos pontos.</td></tr>
+    <tr><td><b>Atenção operacional provisória</b></td><td>A cor da ficha: Verde, Amarelo, Vermelho ou Preto. Provisória, porque depende da revisão e da decisão do profissional.</td></tr>
+    <tr><td><b>Pendência</b></td><td>Algo que ainda falta na ficha. Enquanto houver pendência, a avaliação fica “Parcial”.</td></tr>
+    <tr><td><b>Exclusão</b></td><td>Critério que obriga revisão por profissional. Prevalece sobre a soma de pontos.</td></tr>
+    <tr><td><b>Autodeclarado</b></td><td>Informação que o próprio participante digitou, ainda não conferida pela equipe.</td></tr>
+    <tr><td><b>Backup .LGND</b></td><td>Arquivo protegido por senha que guarda toda a sessão e permite restaurá-la.</td></tr>
+    <tr><td><b>ID do participante</b></td><td>Código único que o aplicativo cria para identificar a ficha, mesmo sem nome.</td></tr>
+    <tr><td><b>TOP</b></td><td>O evento. O número e o local aparecem no cabeçalho.</td></tr>
+    <tr><td><b>Base</b></td><td>A base de Legendários responsável pelo TOP.</td></tr>
+    <tr><td><b>IMC</b></td><td>Índice de massa corporal: relação entre peso e altura.</td></tr>
+    <tr><td><b>SpO₂</b></td><td>Saturação de oxigênio no sangue, medida em porcentagem.</td></tr>
+    <tr><td><b>TFGe</b></td><td>Taxa de filtração glomerular estimada, uma estimativa da função dos rins.</td></tr>
+    <tr><td><b>CRM</b></td><td>Registro profissional do médico.</td></tr>
+    <tr><td><b>OCR</b></td><td>Leitura de texto em imagens ou PDFs escaneados. No aplicativo, é feita no próprio aparelho.</td></tr>
+  </tbody>
+</table>
+
+<h1 id="a1"><span class="n">A</span> Apêndice A: tabela de critérios do aplicativo</h1>
+<p>Esta tabela reproduz a aba <span class="menu">Critérios e fontes</span> (protocolo “Hakunas — base original, revisão 1”). A <b>Cor</b> é a cor que o critério dá quando marcado. Os pontos entram na faixa interna.</p>
+<div class="box importante"><b>Importante</b><p>Fonte indicada no aplicativo: Manual Hakunas 1.0 (07/12/2025), cores do relatório consolidado de 10/11/2026 e regra operacional etária do responsável. O aplicativo informa que a base é incorporada e <b>exige revisão profissional</b>: ela não é uma validação clínica externa. Se o responsável editar os critérios, a tabela do aplicativo muda e esta cópia fica desatualizada.</p></div>
+<table>
+  <thead><tr><th style="width:19%">Faixa</th><th>Pontos</th></tr></thead>
+  <tbody><tr><td>Baixa</td><td>0–7</td></tr><tr><td>Moderada</td><td>8–15</td></tr><tr><td>Alta</td><td>16–25</td></tr><tr><td>Muito alta</td><td>26 ou mais</td></tr></tbody>
+</table>
+{{APENDICE_CRITERIOS}}
+<p class="peq">Salvaguardas do aplicativo: 16–17 anos = Vermelho; Preto exige outro critério explícito; menores de 18 não recebem IMC nem faixa adulta; a faixa depende da revisão completa e não libera participação; o implante permanece pendente na base original.</p>
+
+<section class="cheat">
+<h1 id="a2"><span class="n">B</span> Folha de consulta rápida</h1>
+<p><b>Imprima esta folha e deixe na mesa de triagem.</b></p>
+<h2 style="margin-top:3mm">O caminho de cada participante</h2>
+<div class="fluxo"><span>Novo participante / Importar</span><i>›</i><span>Dados e medidas</span><i>›</i><span>Marcar critérios</span><i>›</i><span>Marcar “Seção revisada”</span><i>›</i><span>Preparo, responsável e CRM</span><i>›</i><span>Ler cor e pendências</span><i>›</i><span>Salvar avaliação</span><i>›</i><span>Casos de atenção: médico responsável</span></div>
+<div class="grid2">
+  <div class="card"><h3>As cores</h3>
+    <p><span class="chip verde">Verde</span> nenhum fator de cor. <b>Não é liberação.</b></p>
+    <p><span class="chip amarelo">Amarelo</span> remédios (pressão, diabetes, colesterol, corticoide, anticoagulante, antidepressivo, inalador) ou IMC &gt; 30.</p>
+    <p><span class="chip vermelho">Vermelho</span> hipertensão, coração, diabetes, outra doença, limitação cirúrgica, idade &gt; 60, 16–17 anos.</p>
+    <p><span class="chip preto">Preto</span> convulsão, ou idade &gt; 60 com doença.</p>
+    <p class="peq">Vale a cor mais grave. Preto › Vermelho › Amarelo › Verde.</p></div>
+  <div class="card"><h3>Faixas de pontos</h3>
+    <p><b>Baixa</b> 0–7 · <b>Moderada</b> 8–15<br><b>Alta</b> 16–25 · <b>Muito alta</b> 26+</p>
+    <p class="peq">Só aparece com a avaliação completa. Cor e faixa são coisas diferentes.</p>
+    <h3>Para a ficha ficar completa</h3>
+    <ul style="margin-bottom:0"><li>5 blocos revisados</li><li>Nome, idade, peso, altura</li><li>4 perguntas de preparo</li><li>Atestado conferido</li><li>Responsável e CRM</li></ul></div>
+  <div class="card"><h3>Exclusão</h3>
+    <p>Texto vermelho <b>“Critérios de exclusão — revisão obrigatória”</b> na ficha.</p>
+    <p><b>A cor pode continuar Verde.</b> Na lista a exclusão não aparece: abra a ficha e use o filtro “Atenção prioritária”.</p></div>
+  <div class="card"><h3>Dados salvos</h3>
+    <p>As fichas ficam <b>só na aba</b>. Não atualize a página (F5).</p>
+    <p><b>Backup .LGND</b>: <span class="k">↓ Salvar backup</span>, senha com 10+ caracteres, anotada em lugar separado. Sem recuperação de senha.</p></div>
+</div>
+<div class="box regra"><b>Sempre</b><p>Marque só o que foi confirmado · texto livre não vira critério · Verde não é liberado · Vermelho, Preto e exclusão vão ao médico responsável · a decisão é do profissional · sigilo dos dados de saúde.</p></div>
+</section>

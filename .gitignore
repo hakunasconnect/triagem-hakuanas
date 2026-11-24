@@ -10,3 +10,12 @@ src/generated-runtimes.js
 src/generated-header-assets.js
 src/generated-pdf-assets.js
 .vercel
+
+# manual do triador: arquivos gerados e o link do formulario (nunca no Git)
+docs/manual/shots/
+docs/manual/pg/
+docs/manual/saida/
+docs/manual/manual.html
+docs/manual/paginas.json
+docs/manual/shots-log.txt
+docs/manual/link-formulario.local.txt

@@ -1,0 +1,15 @@
+import { novoContexto, foto, cadastrar, salvarFicha, rolarDialog, fim, nota } from './lib.mjs';
+const { page, erros } = await novoContexto({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+page.on('dialog', d => d.dismiss());
+await foto(page, 'm1-inicio', { alvo: 'pagina' });
+await cadastrar(page, { name: 'Ana Exemplo', age: '35', weight: '62', height: '165' }); await salvarFicha(page);
+await cadastrar(page, { name: 'Bruno Exemplo', age: '48', weight: '88', height: '175' }, ['htn', 'bpmed']); await salvarFicha(page);
+await cadastrar(page, { name: 'Carlos Exemplo', age: '63', weight: '80', height: '170' }, ['disease']); await salvarFicha(page);
+await page.evaluate(() => window.scrollTo(0, 0));
+const y = await page.locator('section:has(#search)').first().evaluate(e => e.getBoundingClientRect().top + scrollY - 70); await page.evaluate(v => window.scrollTo(0, v), y); await page.waitForTimeout(4200);
+await foto(page, 'm2-lista', { alvo: 'pagina' });
+await page.evaluate(() => window.scrollTo(0, 0));
+await page.locator('#new').click(); await page.waitForTimeout(400);
+await rolarDialog(page, 0); await foto(page, 'm3-ficha', {});
+await rolarDialog(page, 'fim'); await foto(page, 'm4-resultado', {});
+nota('erros ' + JSON.stringify(erros)); await fim();
