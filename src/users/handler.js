@@ -53,7 +53,13 @@ export async function handleUsers({ method, authorization, body } = {}, { fetch:
       if (body.password !== undefined && !validPassword(body.password)) return out(400, { error: 'A senha provisória deve ter 8+ caracteres, com letra e número.' });
       const password = body.password ?? generatePassword();
       const created = await authAdmin('', { method: 'POST', body: JSON.stringify({ email, password, email_confirm: true }) });
-      await sb(`profiles?id=eq.${encodeURIComponent(created.id)}`, { method: 'PATCH', body: JSON.stringify({ role, full_name: name, legend_number: legend, must_change_password: true }) });
+      try {
+        await sb(`profiles?id=eq.${encodeURIComponent(created.id)}`, { method: 'PATCH', body: JSON.stringify({ role, full_name: name, legend_number: legend, must_change_password: true }) });
+      } catch (e) {
+        // Sem o ajuste, a conta ficaria com papel e senha provisória sem troca obrigatória: desfaz a criação.
+        await authAdmin('/' + encodeURIComponent(created.id), { method: 'DELETE' }).catch(() => {});
+        throw e;
+      }
       await audit('usuario_criado', email + ' (' + role + ')');
       return out(200, { id: created.id, ...(body.password === undefined ? { tempPassword: password } : {}) });
     }

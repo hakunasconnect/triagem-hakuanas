@@ -48,8 +48,14 @@ try {
   // O admin master desliga permissões: o que era liberado passa a ser negado.
   const sp = await users(master, { action: 'set-permissions', id: admId, permissions: { view_metrics: false, manage_users: false, view_alerts: false } });
   check('admin master define as permissões do admin', sp.status === 200, JSON.stringify(sp));
-  const m2 = await (await rest(adm, 'usage_events?select=id&limit=5')).json();
-  check('sem view_metrics, o admin deixa de ver métricas de outros', Array.isArray(m2) && m2.every(e => e.user_id === admId || true) && !(await (await rest(adm, 'usage_events?select=user_id&limit=50')).json()).some(e => e.user_id !== admId));
+  const others = await (await svc('/rest/v1/usage_events?select=id&user_id=neq.' + admId + '&limit=1')).json();
+  check('pré-condição: existem eventos de outros usuários (senão o teste abaixo seria vazio)', Array.isArray(others) && others.length > 0, JSON.stringify(others));
+  const m2 = await (await rest(adm, 'usage_events?select=user_id&limit=50')).json();
+  check('sem view_metrics, o admin deixa de ver métricas de outros', Array.isArray(m2) && !m2.some(e => e.user_id !== admId), JSON.stringify(m2).slice(0, 120));
+  // Guarda que só existe como concessão por coluna (0001): o admin não pode se liberar gravando permissions direto.
+  const lift = await rest(adm, 'profiles?id=eq.' + admId, { method: 'PATCH', body: JSON.stringify({ permissions: {} }) });
+  const kept = (await (await svc('/rest/v1/profiles?id=eq.' + admId + '&select=permissions')).json())[0]?.permissions;
+  check('admin não se auto-libera: gravar permissions direto no banco é recusado e nada muda', lift.status >= 400 && kept?.view_metrics === false, `status ${lift.status} ${JSON.stringify(kept)}`);
   const a2 = await (await rest(adm, 'alerts?select=id&limit=1')).json();
   check('sem view_alerts, o admin deixa de ver alertas', Array.isArray(a2) && a2.length === 0, JSON.stringify(a2));
   check('sem manage_users, o admin não gerencia usuários', (await users(adm, { action: 'create', email: `y-${Date.now()}@example.com`, role: 'triador' })).status === 403);
