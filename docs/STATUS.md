@@ -266,3 +266,15 @@ Incidente corrigido: a senha provisória real do novo admin estava em fixtures d
 Limites não testados: `scripts/verify-admin-role.mjs` ao vivo não foi executado depois da 0008 (exige token do Supabase); o olho não foi aberto uma a uma nas telas de troca de senha, backup e chave da API; nada foi testado em celular físico/iPhone. A troca obrigatória de senha só vale na tela (a API não a exige). Decisão do responsável: não revogar os tokens do Supabase nem trocar a chave da Evolution colados no chat.
 
 Próximo item: (opcional, sob autorização) fazer a troca obrigatória de senha valer também na API; homologação física em celular.
+
+## Entrega: formulário Google de autopreenchimento ligado ao app (24/11/2026)
+
+Pedido: o participante preenche a ficha de saúde sozinho; cada resposta vai por e-mail para a coordenação e para o app de triagem, onde fica guardada. Causa de cada parte e arquivos: ver `docs/FORMULARIO-GOOGLE.md`.
+
+Arquivos: `integracoes/google-forms/formulario-hakunas.gs` (modelo público), `api/intake.js`, `src/intake/{normalize,handler,to-preview}.js`, `supabase/migrations/0009_form_submissions.sql`, `src/app.js` (janela "Inscrições do formulário"), `src/telemetry.js` (`intake`), testes `intake-*`, `google-forms-script`, `telemetry-intake`, `browser-forms-import.mjs`.
+
+Resultados: 354/354 testes unitários; janela do app no Chromium real em celular com rede simulada (5 verificações); RLS da tabela nova provada offline em Postgres real (13/13); `/api/intake` publicado e testado ao vivo (6/6: segredo certo, errado, ausente, token falso, GET e carga inválida); CI e deploy do commit 1c85aa4 concluídos.
+
+Limites não testados: o script **não foi executado no Google de verdade** (o simulador prova estrutura e contrato, não o comportamento do Google); a migração 0009 **ainda não foi aplicada** no Supabase de produção (pendente do responsável; sem ela o servidor devolve erro ao gravar uma inscrição); nenhuma inscrição real foi gravada nem lida; layout da janela só visto em Chromium (não em celular físico). O formulário e a janela do app funcionam só no site, não no arquivo offline (política de segurança do arquivo).
+
+Próximo item: aplicar a 0009, executar `criarFormulario` e `testarConexao` na conta da coordenação e fazer um envio real de teste.
