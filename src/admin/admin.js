@@ -4,6 +4,7 @@ import { summarize, formatDuration, usersToCSV } from './metrics.js';
 import { alertsPanel, bindAlerts } from './alerts-panel.js';
 import { usersPanel, bindUsers } from './users-panel.js';
 import { can as canDo } from '../users/perms.js';
+import { enableFieldEyes } from '../password-toggle.js';
 
 const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const $ = s => document.querySelector(s);
@@ -118,4 +119,5 @@ async function dashboard() {
 }
 async function logout() { await client.signOut(); profile = data = selected = null; loginView(); }
 
+if (typeof document !== 'undefined') enableFieldEyes(); // botão "olho" em todo campo de senha, inclusive os das telas redesenhadas
 (async () => { if (client.signedIn) { try { await start(); return; } catch {} } loginView(); })();

@@ -20,6 +20,7 @@ import {encrypt,decrypt} from './vault.js';
 import {createTelemetry} from './telemetry.js';
 import {SUPABASE_URL,SUPABASE_ANON_KEY} from './admin/config.js';
 import {ageRange} from './admin/metrics.js';
+import {enableFieldEyes} from './password-toggle.js';
 const $=s=>document.querySelector(s),esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const paths={people:'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2 M16 3a4 4 0 0 1 0 8 M22 21v-2a4 4 0 0 0-3-3.87 M13 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0',calc:'M5 3h14v18H5z M8 7h8 M8 12h1 M15 12h1 M8 16h1 M15 16h1',book:'M4 3h16v18H4z M8 7h8 M8 11h8 M8 15h5',shield:'M12 3l8 3v6c0 5-8 9-8 9s-8-4-8-9V6z M8 12l3 3 5-6',settings:'M12 3v3 M12 18v3 M3 12h3 M18 12h3 M5.6 5.6l2.1 2.1 M16.3 16.3l2.1 2.1 M5.6 18.4l2.1-2.1 M16.3 7.7l2.1-2.1 M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0'};
 const icon=k=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${paths[k]}"/></svg>`;
@@ -83,6 +84,7 @@ window.addEventListener('afterprint',()=>document.getElementById('print-sheet')?
 window.addEventListener('beforeunload',e=>{if(dirty){e.preventDefault();e.returnValue='';}});
 const headerStyle=document.createElement('style');headerStyle.id='event-header-style';headerStyle.textContent=eventHeaderCSS;document.head.append(headerStyle);
 render();
+if(typeof document!=='undefined')enableFieldEyes();
 if(!globalThis.__HAKUNAS_STANDALONE__&&'serviceWorker'in navigator&&location.protocol!=='file:')window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
 
 function reportDialog(printFirst=false,initialFormat){
