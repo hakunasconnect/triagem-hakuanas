@@ -3,6 +3,7 @@ import { createAdminClient } from './api.js';
 import { summarize, formatDuration, usersToCSV } from './metrics.js';
 import { alertsPanel, bindAlerts } from './alerts-panel.js';
 import { usersPanel, bindUsers } from './users-panel.js';
+import { can as canDo } from '../users/perms.js';
 
 const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const $ = s => document.querySelector(s);
@@ -46,7 +47,7 @@ function passwordView(forced) {
 async function start() {
   const rows = await client.rest('profiles?id=eq.' + client.user.id + '&select=*');
   profile = rows?.[0];
-  if (!profile || profile.role !== 'admin_master') { await client.signOut(); loginView('Este acesso é restrito ao admin master.'); return; }
+  if (!profile || !['admin_master', 'admin'].includes(profile.role)) { await client.signOut(); loginView('Este acesso é restrito aos administradores.'); return; }
   if (profile.must_change_password) return passwordView(true);
   await dashboard();
 }
@@ -92,19 +93,21 @@ function labelTables(root) {
     t.querySelectorAll('tbody tr').forEach(tr => [...tr.children].forEach((td, i) => { if (heads[i]) td.setAttribute('data-label', heads[i]); }));
   });
 }
+const can = p => canDo(profile, p);
 async function dashboard() {
   app.innerHTML = '<p class="muted">Carregando métricas…</p>';
   try { await load(); } catch (e) { app.innerHTML = `<p class="err" role="alert">${esc(e.message)}</p><button id="o">Sair</button>`; $('#o').onclick = logout; return; }
   const s = data.summary, t = s.totals;
   app.innerHTML = `<header class="top"><h1>Admin — Triagem Hakunas</h1><div><button id="csv">Exportar CSV</button> <button id="pw">Alterar senha</button> <button id="refresh">Atualizar</button> <button id="out">Sair</button></div></header>
-  <div class="kpis"><div class="kpi"><b>${t.users}</b><span>Usuários</span></div><div class="kpi"><b>${t.activeUsers7d}</b><span>Ativos em 7 dias</span></div><div class="kpi"><b>${t.sessions}</b><span>Sessões</span></div><div class="kpi"><b>${esc(formatDuration(t.totalMs))}</b><span>Tempo de uso</span></div><div class="kpi"><b>${t.triages}</b><span>Triagens concluídas</span></div></div>
+  <div id="metrics"><div class="kpis"><div class="kpi"><b>${t.users}</b><span>Usuários</span></div><div class="kpi"><b>${t.activeUsers7d}</b><span>Ativos em 7 dias</span></div><div class="kpi"><b>${t.sessions}</b><span>Sessões</span></div><div class="kpi"><b>${esc(formatDuration(t.totalMs))}</b><span>Tempo de uso</span></div><div class="kpi"><b>${t.triages}</b><span>Triagens concluídas</span></div></div>
   <section class="card"><h2>Últimos 14 dias</h2>${daysChart(s.byDay)}</section>
   <section class="card"><h2>Resultado das triagens (cores)</h2>${colorsBar(s.colors)}<p class="muted">Contagens anônimas: o painel não guarda nome nem dado de saúde de participantes.</p></section>
   <section class="card"><h2>Usuários</h2><div class="scroll"><table><thead><tr><th>Usuário</th><th class="hide-sm">Papel</th><th>Sessões</th><th>Tempo</th><th>Triagens</th><th>Último uso</th></tr></thead><tbody>${s.users.map(u => `<tr class="click" tabindex="0" data-id="${esc(u.id)}"><td>${esc(u.name || u.email)}<br><span class="muted">${esc(u.email)}</span></td><td class="hide-sm"><span class="pill">${esc(u.role)}</span></td><td>${u.sessions}</td><td>${esc(formatDuration(u.totalMs))}</td><td>${u.triages}</td><td>${esc(fmt(u.lastSeen))}</td></tr>`).join('')}</tbody></table></div><p class="muted">Toque em um usuário para ver como e quando usou.</p></section>
-  <div id="detail">${detail()}</div>${usersPanel(data, { esc })}${alertsPanel(data, { esc, fmt })}`;
+  </div><div id="detail">${detail()}</div>${can('manage_users') ? usersPanel(data, { esc, me: profile }) : ''}${alertsPanel(data, { esc, fmt, can })}`;
   labelTables(app);
-  bindUsers({ client, app, refresh: dashboard });
-  bindAlerts({ client, app, refresh: dashboard });
+  if (can('manage_users')) bindUsers({ client, app, refresh: dashboard });
+  bindAlerts({ client, app, refresh: dashboard, can });
+  if (!can('view_metrics')) app.querySelectorAll('#metrics, #detail').forEach(e => e.remove());
   $('#out').onclick = logout; $('#pw').onclick = () => passwordView(false); $('#refresh').onclick = dashboard;
   $('#csv').onclick = () => {
     const blob = new Blob(['﻿' + usersToCSV(s.users)], { type: 'text/csv;charset=utf-8' });

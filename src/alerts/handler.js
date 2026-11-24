@@ -1,6 +1,7 @@
 // Lógica do endpoint /api/alert (testável, sem depender da Vercel).
 import { normalizePeople, sendAlerts, sendTexts, normalizeNumber, buildSummaryMessages, summaryCounts } from './server.js';
 import { createEvolution } from './evolution.js';
+import { can } from '../users/perms.js';
 const clip = (v, n) => String(v ?? '').trim().slice(0, n);
 const out = (status, json) => ({ status, json });
 
@@ -18,7 +19,7 @@ export async function handleAlert({ method, authorization, body } = {}, { fetch:
     const t = await r.text(); return t ? JSON.parse(t) : null;
   };
   try {
-    const profile = (await sb(`profiles?id=eq.${encodeURIComponent(user.id)}&select=full_name,legend_number,role,email`))?.[0];
+    const profile = (await sb(`profiles?id=eq.${encodeURIComponent(user.id)}&select=full_name,legend_number,role,email,permissions`))?.[0];
     if (!profile) return out(403, { error: 'Perfil não encontrado.' });
     const stored = (await sb('alert_settings?select=*'))?.[0] || {};
     const settings = { ...stored, api_key: stored.api_key || evolutionKey || '' };
@@ -26,7 +27,7 @@ export async function handleAlert({ method, authorization, body } = {}, { fetch:
     const name = profile.full_name || profile.email || 'Usuário';
 
     if (body.type === 'wa-connect' || body.type === 'wa-status') {
-      if (profile.role !== 'admin_master') return out(403, { error: 'Somente o admin master.' });
+      if (!can(profile, 'manage_whatsapp')) return out(403, { error: 'Você não tem permissão para conectar o WhatsApp.' });
       if (!evolutionKey || !stored.evolution_url) return out(200, { state: 'unconfigured', error: 'Falta a chave da Evolution no servidor.' });
       const evo = createEvolution({ url: stored.evolution_url, key: evolutionKey, fetch: f });
       const instance = stored.instance || 'triagem-hakunas';
@@ -42,7 +43,7 @@ export async function handleAlert({ method, authorization, body } = {}, { fetch:
       } catch (e) { return out(200, { state: 'error', error: e.message }); }
     }
     if (body.type === 'test') {
-      if (profile.role !== 'admin_master') return out(403, { error: 'Somente o admin master.' });
+      if (!can(profile, 'manage_whatsapp')) return out(403, { error: 'Você não tem permissão para enviar o teste.' });
       const deliveries = await sendTexts({ texts: ['✅ Teste de conexão da Triagem Hakunas: se você recebeu esta mensagem, o envio de alertas está funcionando.'], settings, recipients, fetch: f }).catch(e => ({ error: e.message }));
       return out(200, deliveries.error ? { sent: false, error: deliveries.error } : { sent: deliveries.some(d => d.ok), deliveries });
     }
