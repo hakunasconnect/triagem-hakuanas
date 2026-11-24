@@ -85,6 +85,13 @@ function detail() {
   <h2>Últimas ações</h2>${evs.length ? `<div class="scroll"><table><thead><tr><th>Quando</th><th>O que fez</th><th>Detalhe</th></tr></thead><tbody>${evs.map(e => `<tr><td>${fmt(e.occurred_at)}</td><td>${esc(LABELS[e.event_type] || e.event_type)}</td><td class="muted">${metaText(e.meta)}</td></tr>`).join('')}</tbody></table></div>` : '<p class="muted">Sem ações registradas.</p>'}</section>`;
 }
 
+// No celular as tabelas viram cartões: cada célula recebe o nome da coluna.
+function labelTables(root) {
+  root.querySelectorAll('table').forEach(t => {
+    const heads = [...t.querySelectorAll('thead th')].map(h => h.textContent.trim());
+    t.querySelectorAll('tbody tr').forEach(tr => [...tr.children].forEach((td, i) => { if (heads[i]) td.setAttribute('data-label', heads[i]); }));
+  });
+}
 async function dashboard() {
   app.innerHTML = '<p class="muted">Carregando métricas…</p>';
   try { await load(); } catch (e) { app.innerHTML = `<p class="err" role="alert">${esc(e.message)}</p><button id="o">Sair</button>`; $('#o').onclick = logout; return; }
@@ -95,6 +102,7 @@ async function dashboard() {
   <section class="card"><h2>Resultado das triagens (cores)</h2>${colorsBar(s.colors)}<p class="muted">Contagens anônimas: o painel não guarda nome nem dado de saúde de participantes.</p></section>
   <section class="card"><h2>Usuários</h2><div class="scroll"><table><thead><tr><th>Usuário</th><th class="hide-sm">Papel</th><th>Sessões</th><th>Tempo</th><th>Triagens</th><th>Último uso</th></tr></thead><tbody>${s.users.map(u => `<tr class="click" tabindex="0" data-id="${esc(u.id)}"><td>${esc(u.name || u.email)}<br><span class="muted">${esc(u.email)}</span></td><td class="hide-sm"><span class="pill">${esc(u.role)}</span></td><td>${u.sessions}</td><td>${esc(formatDuration(u.totalMs))}</td><td>${u.triages}</td><td>${esc(fmt(u.lastSeen))}</td></tr>`).join('')}</tbody></table></div><p class="muted">Toque em um usuário para ver como e quando usou.</p></section>
   <div id="detail">${detail()}</div>${usersPanel(data, { esc })}${alertsPanel(data, { esc, fmt })}`;
+  labelTables(app);
   bindUsers({ client, app, refresh: dashboard });
   bindAlerts({ client, app, refresh: dashboard });
   $('#out').onclick = logout; $('#pw').onclick = () => passwordView(false); $('#refresh').onclick = dashboard;
@@ -102,7 +110,7 @@ async function dashboard() {
     const blob = new Blob(['﻿' + usersToCSV(s.users)], { type: 'text/csv;charset=utf-8' });
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'uso-triagem-hakunas.csv'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
   };
-  const pick = tr => { selected = tr.dataset.id; $('#detail').innerHTML = detail(); $('#detail').scrollIntoView?.({ behavior: 'smooth' }); };
+  const pick = tr => { selected = tr.dataset.id; $('#detail').innerHTML = detail(); labelTables($('#detail')); $('#detail').scrollIntoView?.({ behavior: 'smooth' }); };
   app.querySelectorAll('tr.click').forEach(tr => { tr.onclick = () => pick(tr); tr.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(tr); } }; });
 }
 async function logout() { await client.signOut(); profile = data = selected = null; loginView(); }

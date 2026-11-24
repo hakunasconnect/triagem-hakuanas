@@ -23,3 +23,17 @@
 
 .dev-credit{padding:18px 24px 28px;margin-top:24px;border-top:1px solid #e4e7df;font-size:12px;line-height:1.6;color:#5d6a60;text-align:center}.dev-credit a{color:inherit;text-decoration:underline}
 @media print{.dev-credit{display:none}}
+
+/* Celular (≤740px): barra superior compacta, menu inferior legível e campos sem zoom no iOS. */
+@media(max-width:740px){
+.topbar{position:static;flex-direction:column;align-items:stretch;min-height:0;height:auto;padding:10px 14px 6px;gap:8px}
+.topbar .actions{max-width:none;flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start;gap:8px;margin:0 -14px;padding:2px 14px 8px;-webkit-overflow-scrolling:touch;scrollbar-width:none;scroll-snap-type:x proximity;scroll-padding-inline:14px}
+.topbar .actions::-webkit-scrollbar{display:none}
+.topbar .actions>*{flex:0 0 auto;white-space:nowrap;min-height:40px;scroll-snap-align:start}
+.topbar .actions .session-status{align-self:center}
+.sidebar{height:auto;min-height:64px;padding:6px 3px calc(6px + env(safe-area-inset-bottom))}
+.nav button{flex:1 1 0;min-width:0;font-size:10px;line-height:1.15;text-align:center}
+.nav button span{display:block;overflow-wrap:anywhere}
+.content{padding-bottom:calc(96px + env(safe-area-inset-bottom))}
+input,select,textarea{font-size:16px}
+}
