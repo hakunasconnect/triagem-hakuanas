@@ -252,3 +252,17 @@ Site privado succeeded: deployment appgdep_6af79579986c8191811e392ac52a2d3d, ver
 Release html-028f1924eafd, download HTTP 200/attachment, 13.945.956 bytes; SHA-256 local e remoto e2fc48d3d227778b1be178b66746a9bb979df4380ea6c898882eac695e46a6f3. URL: https://github.com/ebarroso12/hakunatriagem/releases/download/html-028f1924eafd/Triagem-Hakunas-v1.8.3.html
 
 Próximo item: offline iPhone e homologação física, ainda pendentes; esta entrega só acrescenta o botão solicitado.
+
+## Entrega admin: papel Admin, "tudo do master é só dele", olho na senha e atalhos (24/11/2026)
+
+Causa/pedido: o responsável (admin master) pediu um segundo admin sem poder algum sobre o que é dele (WhatsApp, destinatários, alertas, eventos e histórico dele), botão para ver a senha e facilidade para achar as seções de alertas no celular.
+
+Arquivos: `src/users/perms.js` (MASTER_ONLY), `src/users/handler.js`, `src/alerts/handler.js`, `src/admin/admin.js`/`admin.html`/`alerts-panel.js`, `src/password-toggle.js`, `src/app.js`, migrações `0006`..`0008`, `scripts/verify-admin-role.mjs`, `tests/users-permissions.test.mjs`, `tests/alerts-whatsapp.test.mjs`, `tests/password-toggle.test.mjs`, `tests/browser-admin-stub.mjs`, `docs/ADMIN-E-ALERTAS.md`.
+
+Resultados: 322/322 testes unitários; `tests/browser-admin-stub.mjs` (Chromium real, celular 390 px, banco simulado) aprovado; olho conferido em Chromium real no login do /admin e na conta do triador (15/15). RLS provada offline em Postgres real (PGlite): até a 0007 o admin apagava dados do master (14/33), com a 0008 33/33. Migração 0008 aplicada pelo responsável e confirmada por consulta a `pg_policies` (destinatários e WhatsApp = `is_admin()`; eventos com `is_master_user`). O responsável confirmou ver "Quem recebe" com os dados reais. CI verde e deploy da Vercel concluído até o commit d69e404.
+
+Incidente corrigido: a senha provisória real do novo admin estava em fixtures de teste de um repositório público (commits 56b6170 e ef9fc6e); a senha real foi trocada e a antiga é recusada (HTTP 400). O histórico antigo continua com o valor, sem reescrita por force-push.
+
+Limites não testados: `scripts/verify-admin-role.mjs` ao vivo não foi executado depois da 0008 (exige token do Supabase); o olho não foi aberto uma a uma nas telas de troca de senha, backup e chave da API; nada foi testado em celular físico/iPhone. A troca obrigatória de senha só vale na tela (a API não a exige). Decisão do responsável: não revogar os tokens do Supabase nem trocar a chave da Evolution colados no chat.
+
+Próximo item: (opcional, sob autorização) fazer a troca obrigatória de senha valer também na API; homologação física em celular.

@@ -74,6 +74,7 @@ node scripts/verify-alert-api.mjs               # /api/alert no site publicado
 node scripts/verify-whatsapp-connect.mjs        # QR / estado do WhatsApp
 node scripts/verify-admin-role.mjs              # papel admin: permissões e proteção do admin master (verificações do papel admin e da proteção do admin master)
 node tests/browser-admin.mjs                    # painel no Chromium real (CHROME_PATH, SHOTS_DIR)
+node tests/browser-admin-stub.mjs               # /admin no Chromium (celular) com respostas simuladas: sem token, sem dados reais
 node tests/browser-telemetry.mjs                # login do triador + registro de uso no app publicado
 ```
 
