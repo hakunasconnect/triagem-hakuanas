@@ -58,6 +58,7 @@ try {
   for (const id of made) await svc('/auth/v1/admin/users/' + id, { method: 'DELETE' });
   if (admId) await svc('/auth/v1/admin/users/' + admId, { method: 'DELETE' });
 }
+if (admId) { const gone = await (await svc('/rest/v1/profiles?id=eq.' + admId + '&select=id')).json(); check('limpeza: apagar um admin que gerou auditoria funciona (FK com SET NULL)', Array.isArray(gone) && gone.length === 0, JSON.stringify(gone)); }
 const failed = results.filter(x => !x).length;
 console.log(`\n${results.length - failed}/${results.length} verificações passaram.`);
 process.exit(failed ? 1 : 0);
