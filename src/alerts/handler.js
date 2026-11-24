@@ -90,6 +90,8 @@ export async function handleAlert({ method, authorization, body } = {}, { fetch:
     const fresh = people.filter(p => !seen.has(key(p.name, p.phone, p.color)));
     if (!fresh.length) return out(200, { saved: 0, skipped: people.length, sent: false });
     const rows = await sb('alerts', { method: 'POST', body: JSON.stringify(fresh.map(p => ({ triager_id: user.id, color: p.color, participant_name: p.name, participant_phone: p.phone, participant_email: p.email, reasons: p.reasons }))) });
+    // Simulação (só admin master): grava no banco mas não envia WhatsApp. Usada pelos testes automáticos.
+    if (body.dryRun === true && profile.role === 'admin_master') return out(200, { saved: fresh.length, skipped: people.length - fresh.length, sent: false, dryRun: true });
     let deliveries = [], error = '';
     try { deliveries = await sendAlerts({ people: fresh, settings, recipients, meta: { triager: name, event: clip(body.meta?.event, 200) }, fetch: f }); }
     catch (e) { error = e.message; deliveries = [{ ok: false, error }]; }

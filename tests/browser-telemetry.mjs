@@ -19,6 +19,8 @@ let browser; const errors = [];
 try {
   browser = await chromium.launch({ executablePath: process.env.CHROME_PATH });
   const page = await (await browser.newContext({ viewport: { width: 1280, height: 900 } })).newPage();
+  // Não deixa o teste mandar WhatsApp de verdade: a chamada de alertas é interceptada no navegador.
+  await page.route('**/api/alert', r => r.fulfill({ status: 200, contentType: 'application/json', body: '{"sent":false,"stubbed":true}' }));
   page.on('pageerror', e => errors.push(e.message)); page.on('console', m => /Content Security Policy|Refused to/i.test(m.text()) && errors.push('CSP: ' + m.text()));
   await page.goto(process.env.APP_URL || `http://127.0.0.1:${server.address().port}/`);
   await page.waitForSelector('[data-tab=settings]'); await page.waitForTimeout(3000);

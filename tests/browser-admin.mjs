@@ -40,7 +40,23 @@ try {
     await page.fill('#e', plainEmail); await page.fill('#p', 'senha-errada'); await page.click('button[type=submit]');
     await page.waitForSelector('text=E-mail ou senha incorretos'); console.log('OK: senha errada é recusada');
     await page.fill('#p', plainPass); await page.click('button[type=submit]');
-    await page.waitForSelector('text=restrito ao admin master'); console.log('OK: usuário comum é barrado');
+    await page.waitForSelector('text=restrito aos administradores'); console.log('OK: usuário comum é barrado');
+    await ctx.close(); }
+  // 1b) Admin (abaixo do master): entra pela tela, é obrigado a trocar a senha, e o admin master fica protegido.
+  { const aemail = `br-admin-${tag}@example.com`, apass = 'Provisoria-' + Math.random().toString(36).slice(2) + '9!';
+    const au = await (await adminApi('/auth/v1/admin/users', { method: 'POST', body: JSON.stringify({ email: aemail, password: apass, email_confirm: true }) })).json();
+    await sql(`update public.profiles set role='admin', must_change_password=true where id='${au.id}'`);
+    const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } }), page = await ctx.newPage(); watch(page, 'admin-role');
+    await page.goto(url); await page.waitForSelector('#f'); await page.waitForTimeout(1500);
+    await page.fill('#e', aemail); await page.fill('#p', apass); await page.click('button[type=submit]');
+    await page.waitForSelector('text=Defina uma nova senha'); assert.equal(await page.locator('.kpis').count(), 0, 'nenhum dado antes de trocar a senha');
+    await page.fill('#n', 'curta1!'); await page.fill('#c', 'curta1!'); await page.click('button[type=submit]'); await page.waitForSelector('text=pelo menos 10 caracteres');
+    await page.fill('#n', 'Nova-Senha-Forte-2026!'); await page.fill('#c', 'Nova-Senha-Forte-2026!'); await page.click('button[type=submit]');
+    await page.waitForSelector('.kpis');
+    assert.equal(await page.locator('tr[data-user]:has-text("Admin master") button').count(), 0, 'o admin não tem botões na linha do admin master');
+    assert.equal(await page.locator('[data-saveperms]').count(), 0, 'o admin não edita permissões');
+    assert.equal(await page.locator('#mu-role option[value=admin]').count(), 0, 'o admin não cria admin');
+    console.log('OK: admin entra, troca a senha provisória e o admin master fica protegido na tela');
     await ctx.close(); }
   // 2) Painel com a sessão de teste do admin master, em desktop e celular.
   for (const [name, w, h] of [['desktop', 1280, 900], ['mobile', 390, 800]]) {
@@ -51,6 +67,7 @@ try {
     console.log(`OK ${name}: painel abre para o admin master`);
     assert.ok(await page.locator('#manage-users tbody tr').count() >= 2);
     assert.ok(await page.locator('#manage-users [data-remove][data-self="1"]').count() === 1, 'o admin master tem apagar-usuário protegido');
+    assert.ok(await page.locator('#manage-users [data-saveperms]').count() >= 1, 'o admin master vê as permissões dos admins');
     if (name === 'desktop') {
       // Alertas por WhatsApp: conexão, número e remoção (só a própria linha de teste).
       assert.ok(await page.locator('#wa-connect, #wa-status').first().isVisible());
