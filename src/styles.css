@@ -26,10 +26,11 @@
 
 /* Celular (≤740px): barra superior compacta, menu inferior legível e campos sem zoom no iOS. */
 @media(max-width:740px){
-.topbar{position:static;flex-direction:column;align-items:stretch;min-height:0;height:auto;padding:10px 14px 6px;gap:8px}
-.topbar .actions{max-width:none;flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start;gap:8px;margin:0 -14px;padding:2px 14px 8px;-webkit-overflow-scrolling:touch;scrollbar-width:none;scroll-snap-type:x proximity;scroll-padding-inline:14px}
+.topbar{position:sticky;top:0;z-index:4;flex-direction:column;align-items:stretch;min-height:0;height:auto;padding:6px 14px 0;gap:3px;box-shadow:0 1px 0 #e4e7df}
+.topbar>div:first-child{font-size:12px;line-height:1.2}
+.topbar .actions{max-width:none;flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start;gap:8px;margin:0 -14px;padding:2px 14px 7px;-webkit-overflow-scrolling:touch;scrollbar-width:none;scroll-snap-type:x proximity;scroll-padding-inline:14px}
 .topbar .actions::-webkit-scrollbar{display:none}
-.topbar .actions>*{flex:0 0 auto;white-space:nowrap;min-height:40px;scroll-snap-align:start}
+.topbar .actions>*{flex:0 0 auto;white-space:nowrap;min-height:38px;scroll-snap-align:start}
 .topbar .actions .session-status{align-self:center}
 .sidebar{height:auto;min-height:64px;padding:6px 3px calc(6px + env(safe-area-inset-bottom))}
 .nav button{flex:1 1 0;min-width:0;font-size:10px;line-height:1.15;text-align:center}
