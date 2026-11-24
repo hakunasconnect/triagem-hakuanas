@@ -54,6 +54,13 @@ export function createTelemetry({ url, anonKey, fetch: f = globalThis.fetch?.bin
         return await r.json();
       } catch { return { error: 'Sem conexão com o servidor de alertas.' }; }
     },
+    async intake(action, payload = {}) {
+      if (!session) return { error: 'Entre na conta do triador para buscar as inscrições.' };
+      try {
+        const r = await f(alertUrl.replace(/\/api\/alert$/, '/api/intake'), { method: 'POST', headers: { Authorization: 'Bearer ' + session.access_token, 'Content-Type': 'application/json' }, body: JSON.stringify({ action, ...payload }) });
+        return await r.json();
+      } catch { return { error: 'Sem conexão com o servidor.' }; }
+    },
     async heartbeat() { if (!api.active) return; try { await rest('usage_sessions?id=eq.' + sessionId, { method: 'PATCH', body: JSON.stringify({ last_seen_at: new Date().toISOString() }) }); } catch {} await api.flush(); },
     async end() {
       if (!api.active) return;

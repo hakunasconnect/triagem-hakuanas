@@ -26,3 +26,12 @@ apenas auxilia o julgamento. Nome, idade, telefone, e-mail e motivos de casos ve
 (Evolution) e guardados no Supabase com acesso só do admin master. Detalhes e salvaguardas em `docs/ADMIN-E-ALERTAS.md`.
 A regra de privacidade continua valendo para o restante do app e para qualquer envio a IA externa (Gemini): sem nova
 autorização, não enviar dados de participantes a APIs de IA.
+
+## Decisão do responsável — 24/11/2026 (formulário Google de autopreenchimento)
+
+O usuário (Dr. Edson Barroso) pediu que o participante preencha a ficha de saúde sozinho em um Google Forms da conta da coordenação,
+com envio por e-mail à coordenação e gravação no app de triagem (Supabase, tabela `form_submissions`), para depois importar na sessão.
+Esse fluxo leva dado de saúde digitado pelo participante ao Google (formulário e planilha), ao e-mail da coordenação e ao Supabase, por
+decisão e pedido expressos do responsável, com consentimento (LGPD) no início do formulário. Detalhes em `docs/FORMULARIO-GOOGLE.md`.
+O que continua valendo: nenhum envio dessas fichas a IA externa sem nova autorização; o repositório é público, então nenhum segredo
+nem e-mail real entra nele (o modelo do script usa `__SEGREDO__` e `__EMAIL_DESTINO__`); o formulário não classifica nem libera ninguém.

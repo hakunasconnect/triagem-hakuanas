@@ -20,7 +20,7 @@ continua local e offline.
 | Painel admin | `src/admin/*` → `dist/admin.html` | Métricas, usuários, alertas, destinatários, conexão do WhatsApp |
 | Alertas | `api/alert.js` + `src/alerts/*` | Aviso de quem está triando, alerta de risco, resumo, QR do WhatsApp |
 | Usuários | `api/users.js` + `src/users/handler.js` | Criar/editar/trocar senha/apagar usuários (só admin master) |
-| Banco | `supabase/migrations/0001…0008` | Tabelas, RLS, um único admin master |
+| Banco | `supabase/migrations/0001…0009` | Tabelas, RLS, um único admin master |
 
 ## O que chega no WhatsApp
 
