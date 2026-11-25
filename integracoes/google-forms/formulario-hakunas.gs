@@ -29,6 +29,9 @@ const RE_CPF = '^\\d{3}\\.?\\d{3}\\.?\\d{3}-?\\d{2}$';
 const RE_FONE = '^[0-9+()\\s.-]{10,20}$';
 const RE_PESO = '^\\d{2,3}([.,]\\d{1,2})?$';
 const RE_ALTURA = '^(\\d{3}|\\d{2,3}[.,]\\d{1,2}|\\d[.,]\\d{1,2})$';
+// Código da pista: 10 letras/números (sem I, L, O, 0, 1). Vem preenchido pelo link do triador; o servidor confere se ele existe.
+const RE_PISTA = '^\\s*[A-HJKMNP-Za-hjkmnp-z2-9]{10}\\s*$';
+const PISTA_TITULO = 'Código da pista (já vem preenchido pelo link do seu triador: não altere)';
 
 // ---------------------------------------------------------------------------------------------
 // As perguntas. Cada uma aponta para onde a resposta vai no app:
@@ -129,6 +132,8 @@ const PERGUNTAS = [
   { tipo: 'aceite', titulo: 'Declaração de veracidade', obrigatoria: true,
     ajuda: 'Declaro que as informações acima são verdadeiras e que estou ciente de que omitir ou informar dados incorretos pode colocar minha saúde e a de outras pessoas em risco. Sei que este formulário não substitui o Atestado de Aptidão Física nem a avaliação da equipe médica no check-in.',
     opcoes: ['Declaro que as informações são verdadeiras'] },
+  { pista: true, tipo: 'texto', titulo: PISTA_TITULO, obrigatoria: true, padrao: RE_PISTA, erro: 'Use o link enviado pelo seu triador: o código tem 10 letras e números e não deve ser alterado.',
+    ajuda: 'Este código identifica o triador e a pista que vão atender você. Ele já vem preenchido pelo link que o seu triador enviou: não altere. Se estiver vazio, peça o link correto a ele.' },
 ];
 
 // ----------------------------------------------------------------- criação do formulário
@@ -165,6 +170,23 @@ function criarFormulario() {
   const mensagem = 'Formulário criado.\n\nLink para os participantes responderem:\n' + form.getPublishedUrl() + '\n\nEdição do formulário:\n' + form.getEditUrl() + '\n\nPlanilha com as respostas:\n' + planilha.getUrl();
   Logger.log(mensagem);
   MailApp.sendEmail({ to: CONFIG.EMAIL_DESTINO, subject: 'Formulário da Ficha de Saúde criado — TOP ' + CONFIG.TOP, body: mensagem });
+}
+
+// Para o formulário JÁ CRIADO (o link dele NÃO muda): acrescenta no fim a pergunta do código da pista, se ela ainda não existir, e envia à
+// coordenação o MODELO DE LINK com o código preenchido (o trecho __CODIGO__ é trocado pelo servidor, um código por triador e pista).
+// Pode rodar de novo: não duplica a pergunta.
+function prepararPistas() {
+  if (CONFIG.EMAIL_DESTINO.indexOf('__') >= 0) throw new Error('Preencha EMAIL_DESTINO em CONFIG antes de executar.');
+  const id = PropertiesService.getScriptProperties().getProperty('FORM_ID');
+  if (!id) throw new Error('O formulário ainda não foi criado: execute criarFormulario primeiro.');
+  const form = FormApp.openById(id);
+  const q = PERGUNTAS.filter(function (p) { return p.pista; })[0];
+  const existente = form.getItems().filter(function (i) { return i.getTitle() === q.titulo; })[0];
+  const campo = existente ? existente.asTextItem() : adicionarItem_(form, q);
+  const modelo = form.createResponse().withItemResponse(campo.createResponse('__CODIGO__')).toPrefilledUrl();
+  const aviso = (existente ? 'A pergunta do código da pista já existia.' : 'A pergunta do código da pista foi acrescentada no fim do formulário.') + '\nO link para responder NÃO mudou.';
+  Logger.log(aviso + '\nModelo de link das pistas (guarde na Vercel como FORM_LINK_TEMPLATE; não compartilhe): ' + modelo);
+  MailApp.sendEmail({ to: CONFIG.EMAIL_DESTINO, subject: 'Modelo de link das pistas — TOP ' + CONFIG.TOP, body: aviso + '\n\nMODELO DE LINK (use como valor de FORM_LINK_TEMPLATE na Vercel; não compartilhe com participantes):\n' + modelo + '\n\nO trecho __CODIGO__ é trocado pelo app, um código para cada triador e pista.' });
 }
 
 function adicionarItem_(form, q) {
@@ -231,7 +253,7 @@ function formatarData_(iso) {
 function montarPayload_(resposta) {
   const porTitulo = indexarPerguntas_();
   const fields = {}, extras = [], flags = [], prep = {}, answers = [];
-  let nascimento = '', telefone = '', whats = '', atestado = {}, emerg = {}, fitness = '';
+  let nascimento = '', telefone = '', whats = '', atestado = {}, emerg = {}, fitness = '', pistaCode = '';
   const parqSim = [];
   resposta.getItemResponses().forEach(function (ir) {
     const titulo = ir.getItem().getTitle(), q = porTitulo[titulo];
@@ -240,6 +262,7 @@ function montarPayload_(resposta) {
     const texto = Array.isArray(v) ? v.join('; ') : String(v == null ? '' : v);
     answers.push({ q: titulo, v: texto });
     if (q.tipo === 'aceite') return;
+    if (q.pista) { pistaCode = texto; return; }
     if (q.flags) {
       const pares = q.opcoes;
       (Array.isArray(v) ? v : [v]).forEach(function (rotulo) {
@@ -271,7 +294,7 @@ function montarPayload_(resposta) {
   const partesAtestado = [atestado.status, atestado.exame, atestado.data ? 'emitido em ' + atestado.data : ''].filter(Boolean);
   if (partesAtestado.length) fields.certificateText = partesAtestado.join(' · ');
   fields.notes = parqSim.length ? 'PAR-Q: resposta SIM nos itens ' + parqSim.join(', ') + '.' : 'PAR-Q: nenhum item com resposta SIM.';
-  const payload = { responseId: resposta.getId(), submittedAt: resposta.getTimestamp().toISOString(), top: CONFIG.TOP, birthDate: nascimento, fields: fields, extras: extras, flags: flags, prep: prep, answers: answers };
+  const payload = { responseId: resposta.getId(), submittedAt: resposta.getTimestamp().toISOString(), top: CONFIG.TOP, birthDate: nascimento, pistaCode: pistaCode, fields: fields, extras: extras, flags: flags, prep: prep, answers: answers };
   return { payload: payload, answers: answers };
 }
 

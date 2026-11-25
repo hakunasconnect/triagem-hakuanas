@@ -3,6 +3,7 @@ import { createAdminClient } from './api.js';
 import { summarize, formatDuration, usersToCSV } from './metrics.js';
 import { alertsPanel, bindAlerts } from './alerts-panel.js';
 import { usersPanel, bindUsers } from './users-panel.js';
+import { loadPistas, pistasPanel, bindPistas } from './pistas-panel.js';
 import { can as canDo } from '../users/perms.js';
 import { enableFieldEyes } from '../password-toggle.js';
 
@@ -62,7 +63,9 @@ async function load() {
     client.rest('alert_recipients?select=*&order=created_at.asc'),
     client.rest('alerts?select=*&order=created_at.desc&limit=50'),
   ]);
-  data = { settings: settings?.[0] || {}, recipients: recipients || [], alerts: alerts || [], profiles, sessions, events, summary: summarize({ profiles, sessions, events, now: new Date() }) };
+  // As pistas vêm do servidor; se falharem (ex.: migração 0010 ainda não aplicada) só o painel de pistas avisa, o resto do admin abre normalmente.
+  const pistas = can('manage_users') ? await loadPistas(client).catch(() => null) : undefined;
+  data = { settings: settings?.[0] || {}, recipients: recipients || [], alerts: alerts || [], pistas, profiles, sessions, events, summary: summarize({ profiles, sessions, events, now: new Date() }) };
 }
 
 function colorsBar(c) {
@@ -100,16 +103,16 @@ async function dashboard() {
   try { await load(); } catch (e) { app.innerHTML = `<p class="err" role="alert">${esc(e.message)}</p><button id="o">Sair</button>`; $('#o').onclick = logout; return; }
   const s = data.summary, t = s.totals;
   // Atalhos: as seções de usuários e alertas ficam no fim da página; no celular são várias telas de rolagem.
-  const jump = [can('manage_users') && ['manage-users', 'Usuários'], (can('manage_whatsapp') || can('view_alerts')) && ['alerts', can('manage_whatsapp') ? 'Alertas e WhatsApp' : 'Alertas'], can('manage_recipients') && ['rec-box', 'Quem recebe'], can('view_alerts') && ['hist-box', 'Últimos alertas']].filter(Boolean);
+  const jump = [can('manage_users') && ['manage-users', 'Usuários'], can('manage_users') && ['pistas-box', 'Pistas'],(can('manage_whatsapp') || can('view_alerts')) && ['alerts', can('manage_whatsapp') ? 'Alertas e WhatsApp' : 'Alertas'], can('manage_recipients') && ['rec-box', 'Quem recebe'], can('view_alerts') && ['hist-box', 'Últimos alertas']].filter(Boolean);
   app.innerHTML = `<header class="top"><h1>Admin — Triagem Hakunas</h1><div><button id="csv">Exportar CSV</button> <button id="pw">Alterar senha</button> <button id="refresh">Atualizar</button> <button id="out">Sair</button></div></header>
   ${jump.length ? `<nav class="jump" aria-label="Ir para"><span>Ir para:</span>${jump.map(([id, label]) => `<a href="#${id}">${esc(label)}</a>`).join('')}</nav>` : ''}
   <div id="metrics"><div class="kpis"><div class="kpi"><b>${t.users}</b><span>Usuários</span></div><div class="kpi"><b>${t.activeUsers7d}</b><span>Ativos em 7 dias</span></div><div class="kpi"><b>${t.sessions}</b><span>Sessões</span></div><div class="kpi"><b>${esc(formatDuration(t.totalMs))}</b><span>Tempo de uso</span></div><div class="kpi"><b>${t.triages}</b><span>Triagens concluídas</span></div></div>
   <section class="card"><h2>Últimos 14 dias</h2>${daysChart(s.byDay)}</section>
   <section class="card"><h2>Resultado das triagens (cores)</h2>${colorsBar(s.colors)}<p class="muted">Contagens anônimas: o painel não guarda nome nem dado de saúde de participantes.</p></section>
   <section class="card"><h2>Usuários</h2><div class="scroll"><table><thead><tr><th>Usuário</th><th class="hide-sm">Papel</th><th>Sessões</th><th>Tempo</th><th>Triagens</th><th>Último uso</th></tr></thead><tbody>${s.users.map(u => `<tr class="click" tabindex="0" data-id="${esc(u.id)}"><td>${esc(u.name || u.email)}<br><span class="muted">${esc(u.email)}</span></td><td class="hide-sm"><span class="pill">${esc(u.role)}</span></td><td>${u.sessions}</td><td>${esc(formatDuration(u.totalMs))}</td><td>${u.triages}</td><td>${esc(fmt(u.lastSeen))}</td></tr>`).join('')}</tbody></table></div><p class="muted">Toque em um usuário para ver como e quando usou.</p></section>
-  </div><div id="detail">${detail()}</div>${can('manage_users') ? usersPanel(data, { esc, me: profile }) : ''}${alertsPanel(data, { esc, fmt, can })}`;
+  </div><div id="detail">${detail()}</div>${can('manage_users') ? usersPanel(data, { esc, me: profile }) + pistasPanel(data, { esc }) : ''}${alertsPanel(data, { esc, fmt, can })}`;
   labelTables(app);
-  if (can('manage_users')) bindUsers({ client, app, refresh: dashboard });
+  if (can('manage_users')) { bindUsers({ client, app, refresh: dashboard }); bindPistas({ client, app, refresh: dashboard }); }
   bindAlerts({ client, app, refresh: dashboard, can });
   if (!can('view_metrics')) app.querySelectorAll('#metrics, #detail').forEach(e => e.remove());
   $('#out').onclick = logout; $('#pw').onclick = () => passwordView(false); $('#refresh').onclick = dashboard;

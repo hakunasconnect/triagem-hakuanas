@@ -6,7 +6,7 @@ const J = (status, body) => ({ ok: status < 400, status, json: async () => body,
 const SECRET = 'segredo-de-teste-123';
 const UID = { master: '00000000-0000-0000-0000-00000000000a', tri: '00000000-0000-0000-0000-00000000000b' };
 const ROWS = [{ id: '10000000-0000-0000-0000-000000000001', received_at: '2026-11-24T12:00:00Z', top: '1845', participant_name: 'Ana', status: 'novo', record: { fields: { name: 'Ana' }, flags: [], prep: {}, extras: [] } }];
-function world({ duplicate = false, profiles = { 'tok-master': { id: UID.master, role: 'admin_master' }, 'tok-tri': { id: UID.tri, role: 'triador' } } } = {}) {
+function world({ duplicate = false, profiles = { 'tok-master': { id: UID.master, role: 'admin_master' }, 'tok-coord': { id: '00000000-0000-0000-0000-0000000000c1', role: 'coordenador' }, 'tok-tri': { id: UID.tri, role: 'triador' } } } = {}) {
   const log = [];
   const fetch = async (u, i = {}) => {
     const url = String(u), m = i.method || 'GET'; log.push({ url, m, headers: i.headers || {}, body: i.body ? JSON.parse(i.body) : undefined });
@@ -52,9 +52,10 @@ test('Carga inválida volta 400 com motivo e não grava', async () => {
   assert.equal((await handleIntake({ method: 'GET', secret: SECRET, body: {} }, world().deps)).status, 405);
 });
 
-test('App: lista as inscrições novas para quem está logado (qualquer papel de equipe)', async () => {
-  for (const tok of ['tok-tri', 'tok-master']) { const w = world(); const r = await handleIntake(app({ action: 'list' }, tok), w.deps); assert.equal(r.status, 200); assert.equal(r.json.items.length, 1); assert.equal(r.json.items[0].record.fields.name, 'Ana'); assert.ok(w.log.find(c => c.url.includes('form_submissions')).url.includes('status=eq.novo')); }
-  const w = world(); await handleIntake(app({ action: 'list', includeImported: true }), w.deps);
+// O triador só vê a própria pista (ver intake-pistas.test.mjs); admin master e coordenação veem todas.
+test('App: lista as inscrições novas para a coordenação e a administração', async () => {
+  for (const tok of ['tok-coord', 'tok-master']) { const w = world(); const r = await handleIntake(app({ action: 'list' }, tok), w.deps); assert.equal(r.status, 200); assert.equal(r.json.items.length, 1); assert.equal(r.json.items[0].record.fields.name, 'Ana'); assert.ok(w.log.find(c => c.url.includes('form_submissions')).url.includes('status=eq.novo')); }
+  const w = world(); await handleIntake(app({ action: 'list', includeImported: true }, 'tok-master'), w.deps);
   assert.ok(!w.log.find(c => c.url.includes('form_submissions')).url.includes('status=eq.novo'), 'incluir já importadas tira o filtro');
 });
 
@@ -68,9 +69,9 @@ test('App: sem sessão válida ou sem perfil, nada é lido', async () => {
 
 test('App: marcar como importada só aceita ids válidos e registra quem importou', async () => {
   const w = world(); const ids = ['10000000-0000-0000-0000-000000000001', '10000000-0000-0000-0000-000000000002'];
-  const r = await handleIntake(app({ action: 'mark', ids }, 'tok-tri'), w.deps);
+  const r = await handleIntake(app({ action: 'mark', ids }, 'tok-master'), w.deps);
   assert.equal(r.status, 200); assert.equal(r.json.marked, 2);
-  const patch = writes(w)[0]; assert.equal(patch.body.status, 'importado'); assert.equal(patch.body.imported_by, UID.tri); assert.ok(patch.body.imported_at);
+  const patch = writes(w)[0]; assert.equal(patch.body.status, 'importado'); assert.equal(patch.body.imported_by, UID.master); assert.ok(patch.body.imported_at);
   assert.ok(patch.url.includes(ids[0]) && patch.url.includes(ids[1]));
   const bad = world(); assert.equal((await handleIntake(app({ action: 'mark', ids: ['1; drop table'] }), bad.deps)).status, 400); assert.equal(writes(bad).length, 0);
   assert.equal((await handleIntake(app({ action: 'mark', ids: [] }), world().deps)).status, 400);

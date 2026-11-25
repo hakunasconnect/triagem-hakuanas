@@ -50,6 +50,15 @@ export function createAdminClient({ url, anonKey, fetch: f = globalThis.fetch?.b
       forget();
     },
     rest: (path, init) => call('/rest/v1/' + path, init),
+    // Chama o servidor do próprio site (ex.: /api/intake) com o login do admin; renova a sessão uma vez se ela expirou (401).
+    async server(path, body, retry = true) {
+      if (!session) throw Error('Entre com seu e-mail e senha.');
+      const r = await f(path, { method: 'POST', headers: { Authorization: 'Bearer ' + session.access_token, 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+      if (r.status === 401 && retry) { await refresh(); return this.server(path, body, false); }
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok) throw Error(j.error || 'Não foi possível concluir a operação (' + r.status + ').');
+      return j;
+    },
     async changePassword(next, current = '') {
       validateNewPassword(next, current);
       await call('/auth/v1/user', { method: 'PUT', body: JSON.stringify({ password: next }) });

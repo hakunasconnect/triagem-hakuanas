@@ -29,6 +29,41 @@ Triador (logado no site) ── Inscrições do formulário ── /api/intake (
 O modelo do repositório (`integracoes/google-forms/formulario-hakunas.gs`) traz `__EMAIL_DESTINO__` e `__SEGREDO__` no lugar
 dos valores reais, porque o repositório é **público**. Nunca coloque o segredo nele.
 
+## Pistas: cada ficha chega com o triador e a pista de origem
+
+Para a ficha **nunca** cair no triador errado (várias pistas, triadores e locais ao mesmo tempo):
+
+- O **admin** cadastra as pistas (nome, local, TOP) em `/admin` → **Pistas**.
+- Cada **triador**, logado no site, abre **Participantes → 📍 Minha pista**, escolhe a pista na lista e recebe o **próprio link** do formulário
+  (copiar ou WhatsApp). O link leva um **código único** (10 letras e números) do par triador + pista.
+- O formulário tem a pergunta obrigatória **Código da pista**, já preenchida pelo link; o Google recusa valor fora do formato.
+- Quando a ficha chega, o servidor **confere o código no banco**. Válido: a ficha fica ligada ao triador e à pista. Ausente, inexistente ou
+  alterado: **sem identificação**, nunca atribuída a alguém no chute. Se a conferência falhar (erro do banco), a ficha **não é gravada**:
+  a coordenação recebe o e-mail "ATENÇÃO" e `reenviarTodas` repete o envio.
+- O triador vê e importa **só as fichas da própria pista**. Coordenador, admin e admin master veem todas, com a pista e o triador, e também as
+  "sem identificação" (que não vêm marcadas: a coordenação decide de qual pista são).
+
+### Ligar (nesta ordem)
+
+1. **Banco:** no SQL Editor do Supabase rode `supabase/migrations/0010_pistas.sql` (pode rodar mais de uma vez). Conferência: a consulta
+   `select (select count(*) from information_schema.tables where table_schema='public' and table_name in ('pistas','pista_links')) as tabelas, (select count(*) from information_schema.columns where table_schema='public' and table_name='form_submissions' and column_name in ('pista_link_id','pista_code')) as colunas, (select count(*) from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname='public' and c.relname in ('pistas','pista_links') and c.relrowsecurity) as rls;`
+   deve devolver **2, 2, 2**. **Faça isto antes de publicar o site**: o código novo consulta essas tabelas.
+2. **Site:** publicar (a Vercel atualiza sozinha a cada envio ao GitHub).
+3. **Formulário:** no Apps Script, atualize o código do script (mantendo o seu e-mail e o segredo) e execute `prepararPistas`. Ela acrescenta a pergunta
+   do código no **fim do formulário já criado, sem mudar o link dele**, e envia por e-mail à coordenação o **modelo de link** (termina em `=__CODIGO__`).
+4. **Vercel:** crie a variável `FORM_LINK_TEMPLATE` (sensível) com esse modelo e faça um novo deploy. Sem ela o app mostra o código, mas avisa que o link não está configurado.
+5. No `/admin`, cadastre as pistas.
+6. **Teste real com dois aparelhos:** dois triadores, duas pistas. Cada ficha deve aparecer só para o triador certo, e uma ficha aberta pelo link
+   genérico (sem código) deve ser barrada pelo próprio Google.
+
+### Limites
+
+- O Google Forms não esconde um campo preenchido: o participante vê o código e poderia mexer nele. Código alterado vira "sem identificação"; só seria
+  atribuído errado se ele colasse o código **válido** de outra pista, que ele não consegue adivinhar (10 caracteres, 31 possibilidades cada).
+- A conferência foi provada com um banco simulado (`tests/intake-pistas.test.mjs`) e a migração, com Postgres local; a primeira prova com o Supabase e
+  o Google reais é o teste de dois aparelhos acima. `prepararPistas` só foi testada num simulador do Google.
+- O link genérico do formulário deixa de servir para os participantes (a pergunta do código é obrigatória): cada triador usa o **seu** link.
+
 ## O que o formulário pergunta
 
 Vem do **Manual de Alinhamento Estratégico 2026** (questionário com pontuação, exclusões, PAR-Q de 7 itens, atestado por faixa

@@ -50,5 +50,7 @@ export function normalizeSubmission(input, { now = new Date() } = {}) {
   const answers = (Array.isArray(input.answers) ? input.answers : []).filter(a => a && typeof a === 'object')
     .map(a => ({ q: oneLine(a.q, LIMITS.q), v: manyLines(asText(a.v), LIMITS.a) })).filter(a => a.q).slice(0, LIMITS.answers);
 
-  return { responseId, top: oneLine(input.top, 20), submittedAt, name: fields.name, record: { fields, extras, flags, prep }, answers };
+  // Código da pista (vem preenchido pelo link do triador): MAIÚSCULAS, só letras e números. Quem confere se existe é o servidor.
+  const pistaCode = String(input.pistaCode ?? '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 40);
+  return { responseId, top: oneLine(input.top, 20), submittedAt, name: fields.name, record: { fields, extras, flags, prep }, answers, pistaCode };
 }

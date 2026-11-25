@@ -11,7 +11,7 @@ test('o build coloca o PDF em dist/manual e o PDF é o manual de verdade, sem o 
  const pdfjs=await import('pdfjs-dist/legacy/build/pdf.mjs'),doc=await pdfjs.getDocument({data:bytes,useSystemFonts:true,verbosity:0}).promise;let texto='';for(let p=1;p<=doc.numPages;p++)texto+=(await(await doc.getPage(p)).getTextContent()).items.map(i=>i.str).join(' ')+'\n';
  assert.match(texto,/Manual do Triador/);assert.ok(doc.numPages>=30,'poucas páginas: '+doc.numPages);
  for(const proibido of [/docs\.google\.com/i,/viewform/i,/1FAIpQLS/,/forms\/d\/e/i])assert.doesNotMatch(texto,proibido,'o link do formulário vazou para o PDF público: '+proibido);
- assert.match(texto,/Peça o link à coordenação/,'o aviso de onde pedir o link do formulário deve estar no PDF público');});
+ assert.match(texto,/Minha pista/,'o manual deve ensinar cada triador a gerar o próprio link em "Minha pista"');assert.match(texto,/Não use um link genérico/i,'o aviso contra o link genérico deve estar no manual');});
 
 test('vercel.json: o PDF do manual não herda a política restritiva das páginas do app, e as páginas continuam protegidas',async()=>{const regras=JSON.parse(await readFile('vercel.json','utf8')).headers;const geral=regras.find(r=>/^\/\(\(\?!admin/.test(r.source));assert.ok(geral,'regra geral de segurança não encontrada');const re=new RegExp('^'+geral.source+'$');
  assert.equal(re.test('/manual/'+NOME),false,'a regra geral (CSP default-src none) não pode valer para o PDF');assert.equal(re.test('/'),true);assert.equal(re.test('/index.html'),true);assert.equal(re.test('/admin'),false,'/admin tem regra própria e continua fora da geral');

@@ -68,7 +68,7 @@
 <h1 id="c3"><span class="n">3</span> Conhecendo a tela</h1>
 <p>Esta é a tela inicial, na aba <span class="menu">Participantes</span>.</p>
 <figure><img src="img/01-visao-geral.jpg" alt="Tela inicial do aplicativo"><figcaption>Tela inicial do aplicativo, ainda sem participantes.</figcaption>
-<ol class="leg"><li>Menu lateral: as cinco áreas do aplicativo.</li><li>Importar lista: traz participantes de uma planilha ou arquivo.</li><li>Inscrições do formulário: traz quem se inscreveu sozinho.</li><li>Novo participante: abre uma ficha em branco.</li><li>Imprimir: abre as opções de impressão.</li><li>Exportar: abre as opções de salvar relatórios.</li></ol></figure>
+<ol class="leg"><li>Menu lateral: as cinco áreas do aplicativo.</li><li>Importar lista: traz participantes de uma planilha ou arquivo.</li><li>Inscrições do formulário: traz quem se inscreveu sozinho.</li><li>Minha pista: gera o seu link do formulário, ligado à pista em que você atende.</li><li>Novo participante: abre uma ficha em branco.</li><li>Imprimir: abre as opções de impressão.</li><li>Exportar: abre as opções de salvar relatórios.</li></ol></figure>
 <h2>As cinco áreas do menu</h2>
 <table>
   <thead><tr><th style="width:27%">Área</th><th>Para que serve</th></tr></thead>
@@ -116,7 +116,7 @@
 <ol class="leg"><li>E-mail.</li><li>Senha, com o olho para mostrar.</li><li>Caixa de ciência. Obrigatória.</li><li>Entrar.</li></ol></figure>
 <div class="box importante"><b>O que muda quando você entra na conta</b>
 <ul><li>O aplicativo registra o <b>uso</b>: quando você entrou, as telas abertas, os resultados das triagens por cor e faixa, as importações e as exportações.</li>
-<li>Passam a funcionar as <b>Inscrições do formulário</b> e o botão <span class="k">Enviar resumo da triagem por WhatsApp</span>.</li>
+<li>Passam a funcionar as <b>Inscrições do formulário</b>, o <b>Minha pista</b> e o botão <span class="k">Enviar resumo da triagem por WhatsApp</span>.</li>
 <li><b>A coordenação recebe avisos por WhatsApp</b> (veja o capítulo 10). Cada ficha <span class="chip vermelho">Vermelho</span> ou <span class="chip preto">Preto</span> que você salvar gera um aviso com <b>nome, idade, telefone, e-mail e motivos</b> do participante. Trate esses dados com sigilo.</li></ul></div>
 <h2 id="c4-3">Preferência de salvar arquivos</h2>
 <p>Ainda em <span class="menu">Configurações</span>, o quadro <b>Salvar arquivos · Google Drive e OneDrive</b> deixa você escolher o formato (.xlsx, .csv, .ods, .pdf ou .html) e o destino que prefere para os relatórios. Depois clique em <span class="k">Guardar preferência de salvamento</span>. Isso não envia nada: só guarda a sua escolha neste navegador.</p>
@@ -128,7 +128,7 @@
   <tbody>
     <tr><td><b>A. Novo participante</b></td><td>Para cadastrar uma pessoa digitando, ou quando o participante chega sem inscrição prévia.</td></tr>
     <tr><td><b>B. Importar lista</b></td><td>Quando a coordenação entregou uma planilha ou arquivo com os inscritos.</td></tr>
-    <tr><td><b>C. Inscrições do formulário</b></td><td>Quando o participante preencheu sozinho o formulário do Google. Exige conta do triador e internet.</td></tr>
+    <tr><td><b>C. Inscrições do formulário</b></td><td>Quando o participante preencheu sozinho o formulário do Google, pelo link que você gerou em <b>Minha pista</b>. Exige conta do triador e internet.</td></tr>
   </tbody>
 </table>
 <h2 id="c5-1">A. Novo participante</h2>
@@ -159,10 +159,12 @@
 <li>Limite: 10 MiB por arquivo.</li></ul></div>
 
 <h2 id="c5-3">C. Inscrições do formulário do Google</h2>
-<p>A coordenação pode enviar aos participantes um <b>link de formulário</b> para eles mesmos preencherem a ficha de saúde. Cada resposta chega ao aplicativo e fica esperando você. Os dados são <b>autodeclarados</b>: você deve conferir cada ficha com o participante e com os documentos.</p>
+<p>Cada triador gera o <b>seu link</b> do formulário e o envia aos participantes, para eles mesmos preencherem a ficha de saúde. Cada resposta chega ao aplicativo <b>identificada com o seu nome e a sua pista</b>, fica esperando você e só você a vê. Os dados são <b>autodeclarados</b>: você deve conferir cada ficha com o participante e com os documentos.</p>
 <ol class="passos">
   <li>Entre na <b>conta do triador</b> (capítulo 4) e use o site, com internet. O arquivo offline não busca inscrições.</li>
-  <li>Na aba <span class="menu">Participantes</span>, clique em <span class="k">☁ Inscrições do formulário</span>.</li>
+  <li>Na aba <span class="menu">Participantes</span>, clique em <span class="k">📍 Minha pista</span>, escolha na lista a <b>pista em que você vai atender</b> e clique em <span class="k go">Gerar meu link</span>.</li>
+  <li>Clique em <span class="k">Copiar link</span> ou <span class="k">Enviar por WhatsApp</span> e mande o link aos participantes. Use sempre o <b>seu</b> link, nunca o de outro triador.</li>
+  <li>Depois que os participantes preencherem, na aba <span class="menu">Participantes</span>, clique em <span class="k">☁ Inscrições do formulário</span>. Você vê só as fichas que chegaram pelo <b>seu</b> link; ficha que chegou sem código ou com código errado fica com a coordenação.</li>
   <li>A janela lista as inscrições novas. As válidas já vêm marcadas. As que <b>não podem ser importadas</b> aparecem desmarcadas, com o motivo (por exemplo, “Idade deve ser inteira entre 16 e 120 anos”). Quem já está na lista também vem desmarcado.</li>
   <li>Marque as que quer incluir. Para rever inscrições antigas, marque “Mostrar também as inscrições já importadas”.</li>
   <li>Marque a caixa “Conferi a lista e sei que os dados são autodeclarados...”.</li>
@@ -170,7 +172,7 @@
 </ol>
 <figure class="p70"><img src="img/71-formulario.jpg" alt="Janela das inscrições do formulário"><figcaption>Janela das inscrições do formulário (exemplo com dados inventados).</figcaption>
 <ol class="leg"><li>Uma inscrição válida, marcada.</li><li>Mostrar também as já importadas.</li><li>Caixa de conferência. Obrigatória.</li><li>Importar selecionadas.</li></ol></figure>
-<div class="box dica"><b>Link do formulário para os participantes</b><p class="peq">{{LINK_FORMULARIO}}</p><p>O formulário só coleta as respostas. Ele não classifica nem libera ninguém. A triagem é feita aqui, na ficha do aplicativo.</p></div>
+<div class="box importante"><b>Não use um link genérico do formulário</b><p>O formulário exige o <b>código da pista</b>, que já vem preenchido no link gerado em <span class="k">📍 Minha pista</span>. Quem abrir o formulário por outro caminho não consegue enviar. Peça ao participante que use o link que você mandou e que <b>não altere o código</b>.</p><p>O formulário só coleta as respostas. Ele não classifica nem libera ninguém. A triagem é feita aqui, na ficha do aplicativo.</p></div>
 
 <h1 id="c6"><span class="n">6</span> Fazendo a triagem de um participante</h1>
 <p>É a parte principal do trabalho. Cada participante tem uma <b>ficha</b>. Você preenche, revisa e salva.</p>

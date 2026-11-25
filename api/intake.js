@@ -12,7 +12,7 @@ export default async function handler(req, res) {
   if (typeof body === 'string') { try { body = JSON.parse(body); } catch { body = null; } }
   const r = await handleIntake(
     { method: req.method, secret: req.headers['x-intake-secret'], authorization: req.headers.authorization, body },
-    { fetch, supabaseUrl: SUPABASE_URL, anonKey: SUPABASE_ANON_KEY, serviceKey: process.env.SUPABASE_SERVICE_ROLE_KEY, intakeSecret: process.env.FORM_INTAKE_SECRET },
+    { fetch, supabaseUrl: SUPABASE_URL, anonKey: SUPABASE_ANON_KEY, serviceKey: process.env.SUPABASE_SERVICE_ROLE_KEY, intakeSecret: process.env.FORM_INTAKE_SECRET, linkTemplate: process.env.FORM_LINK_TEMPLATE },
   );
   res.status(r.status).json(r.json);
 }

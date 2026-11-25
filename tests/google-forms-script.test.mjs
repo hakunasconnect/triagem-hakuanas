@@ -14,7 +14,7 @@ function ambiente({ status = 200, rede = false, personalizar = true } = {}) {
   const st = { items: [], mails: [], fetches: [], triggers: [], props: {}, logs: [], responses: [], form: { calls: {} }, titulo: '' };
   const item = tipo => {
     const calls = {};
-    const it = new Proxy({ tipo, calls }, { get: (t, p) => (p in t ? t[p] : (...a) => { (calls[p] ||= []).push(a); return it; }) });
+    const it = new Proxy({ tipo, calls, getTitle: () => (calls.setTitle || []).slice(-1)[0]?.[0], asTextItem: () => it, createResponse: valor => ({ valor }) }, { get: (t, p) => (p in t ? t[p] : (...a) => { (calls[p] ||= []).push(a); return it; }) });
     st.items.push(it); return it;
   };
   const form = new Proxy({}, { get: (_, p) => {
@@ -23,6 +23,8 @@ function ambiente({ status = 200, rede = false, personalizar = true } = {}) {
     if (p === 'getPublishedUrl') return () => 'https://forms.exemplo/responder';
     if (p === 'getEditUrl') return () => 'https://forms.exemplo/editar';
     if (p === 'getResponses') return () => st.responses;
+    if (p === 'getItems') return () => st.items;
+    if (p === 'createResponse') return () => { const r = { itens: [], withItemResponse: ir => { r.itens.push(ir); return r; }, toPrefilledUrl: () => 'https://docs.google.com/forms/d/e/FORM123/viewform?usp=pp_url&entry.777888999=' + r.itens[0].valor }; return r; };
     return (...a) => { (st.form.calls[p] ||= []).push(a); return form; };
   } });
   const validacao = () => { const c = {}; const v = new Proxy({}, { get: (_, p) => (p === 'build' ? () => c : (...a) => { c[p] = a; return v; }) }); return v; };
@@ -35,7 +37,7 @@ function ambiente({ status = 200, rede = false, personalizar = true } = {}) {
   const Logger = { log: m => st.logs.push(String(m)) };
   const fonte = personalizar ? MODELO.replace('__EMAIL_DESTINO__', EMAIL).replace('__SEGREDO__', SEGREDO) : MODELO;
   const api = new Function('FormApp', 'SpreadsheetApp', 'ScriptApp', 'MailApp', 'UrlFetchApp', 'PropertiesService', 'Logger',
-    fonte + '\nreturn { criarFormulario, aoEnviar, testarConexao, reenviarTodas, PERGUNTAS, CONFIG, NENHUMA, RE_CPF, RE_FONE, RE_PESO, RE_ALTURA };')(FormApp, SpreadsheetApp, ScriptApp, MailApp, UrlFetchApp, PropertiesService, Logger);
+    fonte + '\nreturn { criarFormulario, aoEnviar, testarConexao, reenviarTodas, prepararPistas, PERGUNTAS, CONFIG, NENHUMA, RE_CPF, RE_FONE, RE_PESO, RE_ALTURA, RE_PISTA, PISTA_TITULO };')(FormApp, SpreadsheetApp, ScriptApp, MailApp, UrlFetchApp, PropertiesService, Logger);
   return { st, api };
 }
 
@@ -148,4 +150,34 @@ test('reenviarTodas reenvia cada resposta existente; testarConexao envia só o t
   st.responses = [respostaPadrao(api, { [T.nome]: 'Um Dois' }), respostaPadrao(api, { [T.nome]: 'Três Quatro' })];
   api.reenviarTodas(); assert.equal(st.fetches.length, 2); assert.ok(st.logs.some(l => /2 enviadas, 0 com falha/.test(l)));
   st.fetches.length = 0; api.testarConexao(); assert.deepEqual(st.fetches[0].corpo, { test: true }); assert.equal(st.fetches[0].o.headers['x-intake-secret'], SEGREDO);
+});
+
+// ---- Pistas: cada ficha chega com o código do triador/pista de origem (o servidor confere; ver tests/intake-pistas.test.mjs) ----
+test('Pistas: a pergunta do código é a última, obrigatória, e só aceita o formato do código', () => {
+  const { st, api } = ambiente(); api.criarFormulario();
+  const qs = api.PERGUNTAS.filter(q => q.pista); assert.equal(qs.length, 1); assert.equal(qs[0].obrigatoria, true); assert.equal(api.PERGUNTAS[api.PERGUNTAS.length - 1], qs[0], 'fica no fim, junto da declaração');
+  const ok = v => new RegExp(api.RE_PISTA).test(v);
+  for (const v of ['K7M2QX9P4T', 'k7m2qx9p4t', ' K7M2QX9P4T ']) assert.ok(ok(v), v);
+  for (const v of ['K7M2QX9P40', 'K7M2QX9P41', 'K7M2QXIP4T', 'K7M2QXLP4T', 'K7M2QXOP4T', 'ABC', '', 'K7M2QX9P4TT', 'K7M2-QX9P4T']) assert.ok(!ok(v), JSON.stringify(v));
+  const it = st.items.find(i => (i.calls.setTitle || []).some(a => a[0] === api.PISTA_TITULO)); assert.ok(it, 'a pergunta foi criada no formulário');
+  assert.deepEqual(it.calls.setRequired.slice(-1)[0], [true]); assert.equal(it.calls.setValidation[0][0].requireTextMatchesPattern[0], api.RE_PISTA, 'o Google recusa código fora do formato antes de enviar');
+});
+
+test('Pistas: o código preenchido segue com a ficha até o servidor, aparece no e-mail e o servidor o reconhece', () => {
+  const { st, api } = ambiente(); api.criarFormulario(); st.mails.length = 0;
+  api.aoEnviar({ response: respostaPadrao(api, { [api.PISTA_TITULO]: ' k7m2-qx9p 4t ' }) });
+  const p = st.fetches[0].corpo; assert.equal(p.pistaCode, ' k7m2-qx9p 4t ', 'o script envia como veio; quem limpa e confere é o servidor');
+  assert.ok(st.mails[0].body.includes(api.PISTA_TITULO), 'o e-mail mostra o código para auditoria');
+  assert.equal(normalizeSubmission(p).pistaCode, 'K7M2QX9P4T');
+});
+
+test('Pistas: prepararPistas acrescenta a pergunta no formulário já criado, envia o modelo de link e não duplica', () => {
+  const { st, api } = ambiente(); assert.throws(() => api.prepararPistas(), /criarFormulario/);
+  api.criarFormulario(); st.items = st.items.filter(i => !(i.calls.setTitle || []).some(a => a[0] === api.PISTA_TITULO)); // como o formulário que já existe hoje: sem a pergunta
+  const antes = st.items.length; st.mails.length = 0;
+  api.prepararPistas();
+  assert.equal(st.items.length, antes + 1, 'acrescentou a pergunta'); assert.equal(st.mails.length, 1); assert.equal(st.mails[0].to, EMAIL);
+  assert.match(st.mails[0].body, /viewform\?usp=pp_url&entry\.\d+=__CODIGO__/); assert.match(st.mails[0].body, /FORM_LINK_TEMPLATE/); assert.match(st.mails[0].body, /NÃO mudou/);
+  assert.ok(!st.mails[0].body.includes(SEGREDO), 'o segredo nunca vai no e-mail');
+  api.prepararPistas(); assert.equal(st.items.length, antes + 1, 'rodar de novo não duplica a pergunta');
 });
