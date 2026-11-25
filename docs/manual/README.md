@@ -1,7 +1,8 @@
 # Manual do Triador (PDF)
 
 Fontes do manual em PDF entregue aos hakunas que fazem a triagem. O texto está em `corpo.html`, o estilo em `estilo.css` e as figuras
-(telas reais do app, com participantes inventados) em `img/`. O PDF final **não** é versionado: é gerado por `build.mjs`.
+(telas reais do app, com participantes inventados) em `img/`. O PDF de uso interno (`saida/`) **não** é versionado: é gerado por `build.mjs`.
+Só a **versão pública** (sem o link do formulário) fica no Git, em `publicado/`, porque é ela que o app abre e baixa (ver "Versão que vai para o site").
 
 ## Gerar o PDF
 
@@ -13,6 +14,17 @@ Tudo dentro de `docs/manual`, com o Chromium do Playwright (`CHROME_PATH` ou o `
 3. `node build.mjs` gera `saida/Manual-do-Triador-Triagem-Hakunas.pdf` e repete a paginação até o sumário ficar estável.
 4. `node verificar.mjs saida/Manual-do-Triador-Triagem-Hakunas.pdf` confere: sem marcadores `{{`, sem `undefined`, sem caractere quebrado
    e com os números de página do sumário batendo com as páginas reais.
+
+## Versão que vai para o site
+
+O app tem o painel "Manual do triador" (Abrir / Baixar PDF). O arquivo servido é `https://triagemhakunas.vercel.app/manual/Manual-do-Triador-Triagem-Hakunas.pdf`
+e vem de `docs/manual/publicado/Manual-do-Triador-Triagem-Hakunas.pdf`, que o `npm run build` copia para `dist/manual/` (o build falha se ele faltar).
+
+1. Como o site é **público**, essa versão não pode conter o link do formulário: gere com `node build.mjs --publico` (não lê o link; no lugar
+   entra "Peça o link à coordenação do TOP").
+2. Copie `saida/Manual-do-Triador-Triagem-Hakunas-publico.pdf` para `publicado/Manual-do-Triador-Triagem-Hakunas.pdf`.
+3. `tests/manual-no-app.test.mjs` extrai o texto do PDF e falha se aparecer `docs.google.com`, `viewform` ou o id do formulário.
+4. Só troque o PDF publicado quando o app ou o texto mudarem: cada versão acrescenta ~4,7 MB ao histórico do repositório.
 
 ## Quando o app mudar
 

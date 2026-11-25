@@ -3,8 +3,10 @@ import './prepare-runtimes.mjs';
 import {build} from 'esbuild';
 import {createCanvas} from '@napi-rs/canvas';
 import {createHash} from 'node:crypto';
-import {mkdir,readFile,writeFile} from 'node:fs/promises';
+import {copyFile,mkdir,readFile,writeFile} from 'node:fs/promises';
 await mkdir('dist',{recursive:true});
+// Manual do Triador (versão PÚBLICA, sem o link do formulário): o app abre/baixa de dist/manual/. Se o arquivo faltar o build falha, para não publicar um botão que dá 404.
+await mkdir('dist/manual',{recursive:true});await copyFile('docs/manual/publicado/Manual-do-Triador-Triagem-Hakunas.pdf','dist/manual/Manual-do-Triador-Triagem-Hakunas.pdf');
 
 await build({entryPoints:['src/app.js'],bundle:true,minify:true,target:['es2020'],outfile:'dist/app.js',loader:{'.css':'css'}});
 let html=await readFile('index.html','utf8'),js=await readFile('dist/app.js','utf8'),css=await readFile('dist/app.css','utf8');

@@ -2,9 +2,13 @@ import { chromium } from '../../node_modules/@playwright/test/index.mjs';
 import { readFileSync, writeFileSync, existsSync, statSync, mkdirSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
 const DIR = new URL('./', import.meta.url);
-// Rode de dentro de docs/manual:  node build.mjs [saida.pdf]   (padrão: saida/Manual-do-Triador-Triagem-Hakunas.pdf)
+// Rode de dentro de docs/manual:  node build.mjs [--publico] [saida.pdf]
+//   sem --publico: versão de uso interno, com o link do formulário (padrão: saida/Manual-do-Triador-Triagem-Hakunas.pdf)
+//   com --publico: versão que vai para o site (aberto na internet): NÃO lê nem escreve o link do formulário
+//                  (padrão: saida/Manual-do-Triador-Triagem-Hakunas-publico.pdf)
 mkdirSync('saida', { recursive: true });
-const SAIDA = process.argv[2] || 'saida/Manual-do-Triador-Triagem-Hakunas.pdf';
+const PUBLICO = process.argv.includes('--publico');
+const SAIDA = process.argv.slice(2).find(a => !a.startsWith('--')) || (PUBLICO ? 'saida/Manual-do-Triador-Triagem-Hakunas-publico.pdf' : 'saida/Manual-do-Triador-Triagem-Hakunas.pdf');
 const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
 // --- apêndice A gerado a partir do texto real da aba "Critérios e fontes"
@@ -22,10 +26,15 @@ if (!apendice) throw new Error('apêndice vazio');
 let corpo = readFileSync(new URL('corpo.html', DIR), 'utf8').replace('{{APENDICE_CRITERIOS}}', apendice);
 // O link do formulário NÃO fica no repositório (público): vem da variável LINK_FORMULARIO ou do arquivo local ignorado pelo Git.
 const arqLink = new URL('link-formulario.local.txt', DIR);
-const linkFormulario = (process.env.LINK_FORMULARIO || (existsSync(arqLink) ? readFileSync(arqLink, 'utf8') : '')).trim();
-if (corpo.includes('{{LINK_FORMULARIO}}')) {
-  if (!/^https:\/\/docs\.google\.com\/forms\/.+\/viewform/.test(linkFormulario)) throw new Error('Informe o link de RESPOSTA do formulário (termina em /viewform): variável LINK_FORMULARIO ou arquivo docs/manual/link-formulario.local.txt.');
-  corpo = corpo.split('{{LINK_FORMULARIO}}').join(linkFormulario);
+if (PUBLICO) {
+  // Versão do site: o link nunca entra (nem é lido), para qualquer pessoa na internet não poder responder em nome dos participantes.
+  corpo = corpo.split('{{LINK_FORMULARIO}}').join('Peça o link à coordenação do TOP. Ele não está neste arquivo porque este manual fica aberto na internet.');
+} else {
+  const linkFormulario = (process.env.LINK_FORMULARIO || (existsSync(arqLink) ? readFileSync(arqLink, 'utf8') : '')).trim();
+  if (corpo.includes('{{LINK_FORMULARIO}}')) {
+    if (!/^https:\/\/docs\.google\.com\/forms\/.+\/viewform/.test(linkFormulario)) throw new Error('Informe o link de RESPOSTA do formulário (termina em /viewform): variável LINK_FORMULARIO ou arquivo docs/manual/link-formulario.local.txt.');
+    corpo = corpo.split('{{LINK_FORMULARIO}}').join(linkFormulario);
+  }
 }
 corpo = corpo.replace(/<table([^>]*)>([\s\S]*?)<\/table>/g, (m, at, inner) => (inner.match(/<tr/g) || []).length <= 7 ? '<table data-curta="1"' + at + '>' + inner + '</table>' : m);
 
