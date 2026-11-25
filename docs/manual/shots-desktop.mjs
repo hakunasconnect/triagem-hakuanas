@@ -74,7 +74,7 @@ await passo('lista', async () => {
   await cadastrar(page, { name: 'Elisa Exemplo', age: '17', weight: '55', height: '160' }); await salvarFicha(page);
   await cadastrar(page, { name: 'Maria Exemplo', phone: '(11) 97777-6666', age: '41', state: 'SP', weight: '68', height: '165', blood: 'O+', pressure: '120/80', pulse: '72', spo2: '97' }, [], { completo: true }); await salvarFicha(page);
   await page.evaluate(() => window.scrollTo(0, 0)); await page.waitForTimeout(300);
-  await foto(page, '30-lista', { secao: 'section:has(#search)', marks: [['#search', 1], ['#filter', 2], ['#color-filter', 3], ['#list-order', 4], ['#clear-list-filters', 5], [page.getByText('Abrir ficha').first(), 6]] });
+  await foto(page, '30-lista', { secao: 'section:has(#search)', marks: [['#search', 1], ['#filter', 2], ['#color-filter', 3], ['#list-order', 4], ['#clear-list-filters', 5], [page.getByText('Abrir ficha').first(), 6], ['[data-exclusion-alert]', 7]] });
   await page.locator('#color-filter').selectOption({ label: 'Vermelho' }); await page.waitForTimeout(300);
   await foto(page, '31-lista-vermelho', { secao: 'section:has(#search)', marks: [['#color-filter', 1]] });
   await page.locator('#clear-list-filters').click(); await page.waitForTimeout(300);
